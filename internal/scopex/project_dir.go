@@ -6,7 +6,13 @@ import (
 )
 
 func UseProjectDir(ctx context.Context) string {
-	return ctx.Value(constants.ContextKeyProjectDir).(string)
+	val := ctx.Value(constants.ContextKeyProjectDir)
+
+	if val == nil {
+		return ""
+	} else {
+		return val.(string)
+	}
 }
 
 func WithProjectDir(ctx context.Context, dir string) context.Context  {

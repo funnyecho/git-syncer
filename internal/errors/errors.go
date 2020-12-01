@@ -30,7 +30,16 @@ func (e *Error) Is(target error) bool {
 		return false
 	}
 
-	return t.StatusCode > 0
+	return t.StatusCode >= 0 && e.StatusCode == t.StatusCode
+}
+
+func (e *Error) As(target error) bool {
+	t, ok := target.(*Error)
+	if !ok {
+		return false
+	}
+
+	return t.StatusCode >= 0
 }
 
 type errorOption = func(err *Error)

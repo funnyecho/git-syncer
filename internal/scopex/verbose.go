@@ -12,10 +12,24 @@ const (
 	VerboseDebug
 )
 
+const LowestVerbose = VerboseDebug
+
 func UseVerbose(ctx context.Context) int {
-	return  ctx.Value(constants.ContextKeyVerbose).(int)
+	val := ctx.Value(constants.ContextKeyVerbose)
+	if val == nil {
+		return VerboseSilent
+	} else {
+		return min(LowestVerbose, val.(int))
+	}
 }
 
 func WithVerbose(ctx context.Context, verbose int) context.Context {
-	return context.WithValue(ctx, constants.ContextKeyVerbose, verbose)
+	return context.WithValue(ctx, constants.ContextKeyVerbose, min(LowestVerbose, verbose))
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
