@@ -1,8 +1,7 @@
 package gitter
 
 import (
-	"bytes"
-	"os/exec"
+	"github.com/funnyecho/git-syncer/pkg/command"
 	"strconv"
 	"strings"
 )
@@ -11,20 +10,14 @@ func GetGitVersion() (majorVersion, minorVersion int, err error) {
 	majorVersion = 0
 	minorVersion = 0
 
-	cmd := exec.Command("git", "--version")
+	cmd := command.Command("git", "--version")
 
-	var stdout bytes.Buffer
-
-	cmd.Stdout= &stdout
-
-	err = cmd.Run()
+	plainVersion, err := cmd.Output()
 	if err != nil {
 		return
 	}
 
-	plainVersion := string(stdout.Bytes())
-
-	version := strings.Fields(plainVersion)[2]
+	version := strings.Fields(string(plainVersion))[2]
 	versionParts := strings.FieldsFunc(version, func(r rune) bool {
 		return r == '.'
 	})

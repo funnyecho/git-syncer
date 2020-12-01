@@ -1,22 +1,17 @@
 package gitter
 
 import (
-	"bytes"
-	"os/exec"
+	"github.com/funnyecho/git-syncer/pkg/command"
 )
 
-func GetProjectDir() (dir string, err error)  {
-	cmd := exec.Command("git", "rev-parse --show-toplevel")
+func GetProjectDir() (dir string, err error) {
+	cmd := command.Command("git", "rev-parse --show-toplevel")
 
-	var stdout bytes.Buffer
-
-	cmd.Stdout= &stdout
-
-	err = cmd.Run()
+	r, err := cmd.Output()
 	if err != nil {
 		return
 	}
 
-	dir = string(stdout.Bytes())
+	dir = string(r)
 	return
 }
