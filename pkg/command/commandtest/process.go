@@ -10,7 +10,7 @@ import (
 type CommandExecutor = func(name string, args ...string) (statusCode int, output string)
 
 func TestHelperProcess(t *testing.T, executors ...CommandExecutor) {
-	if EnvUseGoWantHelperProcess() != "1" {
+	if !EnvUseGoWantHelperProcess() {
 		return
 	}
 

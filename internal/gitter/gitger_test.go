@@ -1,1 +1,1 @@
-package gitter
+package gitter_test

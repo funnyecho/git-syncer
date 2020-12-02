@@ -11,20 +11,19 @@ import (
 type TestingCommanderOption = func(options *testingCommanderOptions)
 
 func WithCommanderHelperName(helperName string) TestingCommanderOption {
+	if !strings.HasPrefix(helperName, "Test") {
+		panic("helper name must start with `Test`")
+	}
+
 	return func(options *testingCommanderOptions) {
 		options.HelperName = helperName
 	}
 }
 
-func WithCommanderEnvs(envs func(prevEnvs []string) []string) TestingCommanderOption {
+func WithCommanderEnvs(envs EnvFactory) TestingCommanderOption {
 	return func(options *testingCommanderOptions) {
 		options.Envs = envs
 	}
-}
-
-type testingCommanderOptions struct {
-	HelperName string
-	Envs       func(prevEnvs []string) []string
 }
 
 func NewTestingCommander(withOptions ...TestingCommanderOption) command.Commander {
@@ -48,7 +47,7 @@ func NewTestingCommander(withOptions ...TestingCommanderOption) command.Commande
 	return func(name string, args ...string) *exec.Cmd {
 		commandTimes += 1
 		if options.Envs != nil {
-			envs = options.Envs(envs)
+			envs = options.Envs(envs, name, args...)
 		}
 
 		cs := []string{fmt.Sprintf("-test.run=%s", helperName), "--", name}
@@ -62,4 +61,11 @@ func NewTestingCommander(withOptions ...TestingCommanderOption) command.Commande
 
 		return cmd
 	}
+}
+
+type EnvFactory = func(prevEnvs []string, name string, args ...string) []string
+
+type testingCommanderOptions struct {
+	HelperName string
+	Envs       EnvFactory
 }
