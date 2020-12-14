@@ -3,6 +3,7 @@
 
 # ide properties
 .idea/
+.vscode/
 
 # Binaries for programs and plugins
 *.exe

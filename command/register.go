@@ -5,9 +5,10 @@ import (
 	"github.com/mitchellh/cli"
 )
 
+// Register all syner command factories
 func Register() map[string]cli.CommandFactory {
 	return map[string]cli.CommandFactory{
-		"setup":         setup.Factory,
+		"setup": setup.Factory,
 		//"catchup":      catchup.Factory,
 		//"push":         push.Factory,
 		//"add-scope":    add_scope.Factory,
