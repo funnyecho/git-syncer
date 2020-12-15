@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/funnyecho/git-syncer/internal/constants"
-	"github.com/funnyecho/git-syncer/internal/errors"
 	"github.com/funnyecho/git-syncer/internal/log"
 	"github.com/funnyecho/git-syncer/internal/scopex"
+	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/syncer"
 	"github.com/mitchellh/cli"
 )

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/funnyecho/git-syncer/internal/constants"
-	"github.com/funnyecho/git-syncer/internal/errors"
-	"github.com/funnyecho/git-syncer/internal/gitter"
+	"github.com/funnyecho/git-syncer/pkg/errors"
+	"github.com/funnyecho/git-syncer/pkg/gitter"
 )
 
 // CheckIsDirtyRepository check whether has modified files

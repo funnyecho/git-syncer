@@ -4,7 +4,7 @@ import (
 	stdErr "errors"
 	"fmt"
 	"github.com/funnyecho/git-syncer/internal/constants"
-	"github.com/funnyecho/git-syncer/internal/errors"
+	"github.com/funnyecho/git-syncer/pkg/errors"
 	. "github.com/stretchr/testify/assert"
 	"testing"
 )

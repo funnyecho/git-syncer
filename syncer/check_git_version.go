@@ -2,7 +2,8 @@ package syncer
 
 import (
 	"fmt"
-	"github.com/funnyecho/git-syncer/internal/gitter"
+
+	"github.com/funnyecho/git-syncer/pkg/gitter"
 )
 
 func CheckGitVersion() error {
