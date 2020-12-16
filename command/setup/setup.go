@@ -2,6 +2,7 @@ package setup
 
 import (
 	"flag"
+	"github.com/funnyecho/git-syncer/internal/contrib"
 
 	"github.com/funnyecho/git-syncer/constants"
 	"github.com/funnyecho/git-syncer/pkg/log"
@@ -52,6 +53,8 @@ func (c *cmd) Run(args []string) int {
 		return constants.ErrorStatusGit
 	}
 
+	syncer.SetupRemote()
+
 	if syncRootErr := syncer.SetSyncRoot(); syncRootErr != nil {
 		log.Errorw("Sync root not a valid directory", "err", syncRootErr)
 		return constants.ErrorStatusUsage
@@ -67,10 +70,7 @@ func (c *cmd) Run(args []string) int {
 		return constants.ErrorStatusGit
 	}
 
-	if contribErr := syncer.SetupContrib(); contribErr != nil {
-		log.Errorw("Can't not setup contrib")
-		return constants.ErrorStatusUsage
-	}
+	syncer.SetupContrib(contrib.UseContrib())
 
 	return constants.ErrorStatusNoError
 }

@@ -1,8 +1,7 @@
-package main
+package command
 
 import (
 	"fmt"
-	"github.com/funnyecho/git-syncer/command"
 	"github.com/funnyecho/git-syncer/constants"
 	"github.com/mitchellh/cli"
 	"os"
@@ -14,11 +13,11 @@ var (
 	BuildPlatform string
 )
 
-func main() {
+func Run() {
 	c := cli.NewCLI("git-syncer", Version)
 	c.Args = os.Args[1:]
 
-	c.Commands = command.Register()
+	c.Commands = Register()
 
 	exitStatus, err := c.Run()
 	if err != nil {

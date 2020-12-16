@@ -1,7 +1,9 @@
-// +build !contrib
-
 package syncer
 
-func SetupContrib() error {
-	return nil
+import "github.com/funnyecho/git-syncer/internal/contrib"
+
+var wipContrib contrib.Contrib
+
+func SetupContrib(c contrib.Contrib) {
+	wipContrib = c
 }
