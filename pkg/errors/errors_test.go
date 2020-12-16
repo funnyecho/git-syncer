@@ -3,7 +3,7 @@ package errors_test
 import (
 	stdErr "errors"
 	"fmt"
-	"github.com/funnyecho/git-syncer/internal/constants"
+	"github.com/funnyecho/git-syncer/constants"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	. "github.com/stretchr/testify/assert"
 	"testing"
@@ -26,8 +26,8 @@ func TestErrors(t *testing.T)  {
 
 	usageErrWithWrappedErr := &errors.Error{
 		StatusCode: constants.ErrorStatusUsage,
-		Err: plainErr,
-		Msg: "usage err with wrapped error",
+		Err:        plainErr,
+		Msg:        "usage err with wrapped error",
 	}
 
 	plainErrWithWrappedError := fmt.Errorf("plain err 3 with usage error: %w", usageErrWithWrappedErr)

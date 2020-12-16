@@ -19,7 +19,7 @@ func WithUnoPorcelainStatus() WithArgs {
 }
 
 func getPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
-	args := []string{"status --porcelain"}
+	args := []string{"status", "--porcelain"}
 
 	for _, fn := range withArgs {
 		arg := fn()
@@ -38,7 +38,6 @@ func getPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
 	}
 
 	defer func() {
-		err = cmd.Wait()
 		if err != nil {
 			status = nil
 		}
@@ -50,6 +49,8 @@ func getPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
 			status = append(status, scanner.Text())
 		}
 	}()
+
+	err = cmd.Wait()
 
 	return status, nil
 }

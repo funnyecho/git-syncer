@@ -3,7 +3,7 @@ package setup
 import (
 	"flag"
 
-	"github.com/funnyecho/git-syncer/internal/constants"
+	"github.com/funnyecho/git-syncer/constants"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/pkg/log"
 	"github.com/funnyecho/git-syncer/syncer"

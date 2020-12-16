@@ -5,7 +5,7 @@ import (
 )
 
 func GetProjectDir() (dir string, err error) {
-	cmd := command.Command("git", "rev-parse --show-toplevel")
+	cmd := command.Command("git", "rev-parse", "--show-toplevel")
 
 	r, err := cmd.Output()
 	if err != nil {

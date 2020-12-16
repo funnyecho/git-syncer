@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/funnyecho/git-syncer/command"
-	"github.com/funnyecho/git-syncer/internal/constants"
+	"github.com/funnyecho/git-syncer/constants"
 	"github.com/mitchellh/cli"
 	"os"
 )
