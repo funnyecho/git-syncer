@@ -4,7 +4,6 @@ import (
 	"flag"
 
 	"github.com/funnyecho/git-syncer/constants"
-	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/pkg/log"
 	"github.com/funnyecho/git-syncer/syncer"
 	"github.com/mitchellh/cli"
@@ -31,32 +30,47 @@ func (c *cmd) Run(args []string) int {
 	flags := flag.NewFlagSet("setup", flag.ContinueOnError)
 
 	syncer.WithRemoteFlag(flags)
+	syncer.WithBranchFlag(flags)
 
 	if flagErr := flags.Parse(args); flagErr != nil {
-		log.Errore(errors.NewError(errors.WithMsg("Failed to parse flags"), errors.WithErr(flagErr)))
+		log.Errorw("Failed to parse flags", "err", flagErr)
 		return constants.ErrorStatusUsage
 	}
 
 	if gitVerErr := syncer.CheckGitVersion(); gitVerErr != nil {
-		log.Errore(errors.NewError(errors.WithMsg("Not a Git project? "), errors.WithErr(gitVerErr)))
+		log.Errorw("Not a Git project? ", "err", gitVerErr)
 		return constants.ErrorStatusGit
 	}
 
 	if projectDirErr := syncer.SetupProjectDir(); projectDirErr != nil {
-		log.Errore(errors.NewError(errors.WithMsg("not a git repository (or any of the parent directories): .git"), errors.WithErr(projectDirErr)))
+		log.Errorw("not a git repository (or any of the parent directories): .git", "err", projectDirErr)
 		return constants.ErrorStatusGit
 	}
 
 	if repoDirtyErr := syncer.CheckIsDirtyRepository(); repoDirtyErr != nil {
-		log.Errore(errors.NewError(errors.WithMsg("Dirty repository: Having uncommitted changes. "), errors.WithErr(repoDirtyErr)))
+		log.Errorw("Dirty repository: Having uncommitted changes. ", "err", repoDirtyErr)
 		return constants.ErrorStatusGit
 	}
 
-	if syncRootErr := syncer.SetupSyncRoot(); syncRootErr != nil {
-		log.Errore(errors.NewError(errors.WithMsg("Sync root not a valid directory"), errors.WithErr(syncRootErr)))
+	if syncRootErr := syncer.SetSyncRoot(); syncRootErr != nil {
+		log.Errorw("Sync root not a valid directory", "err", syncRootErr)
 		return constants.ErrorStatusUsage
 	}
 
+	if branchErr := syncer.SetWorkingBranch(); branchErr != nil {
+		log.Errorw("Setup working branch failed", "err", branchErr)
+		return constants.ErrorStatusGit
+	}
+
+	if localSHA1Err := syncer.SetupLocalSHA1(); localSHA1Err != nil {
+		log.Errorw("Can't not get local revision")
+		return constants.ErrorStatusGit
+	}
+
+	if contribErr := syncer.SetupContrib(); contribErr != nil {
+		log.Errorw("Can't not setup contrib")
+		return constants.ErrorStatusUsage
+	}
 
 	return constants.ErrorStatusNoError
 }

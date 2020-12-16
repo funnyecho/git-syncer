@@ -11,7 +11,6 @@ const (
 	projectConfigName = ".git-syncer-config"
 )
 
-
 func GetConfig(key string) (string, error) {
 	return getConfig(key)
 }

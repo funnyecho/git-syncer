@@ -7,7 +7,7 @@ import (
 
 var syncRoot = ""
 
-func SetupSyncRoot() error {
+func SetSyncRoot() error {
 	r, _ := GetConfig("sync_root")
 	if r == "" {
 		r = "./assets"
