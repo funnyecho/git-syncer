@@ -1,4 +1,4 @@
-package add_scope
+package remote
 
 import "github.com/mitchellh/cli"
 

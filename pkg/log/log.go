@@ -1,9 +1,7 @@
 package log
 
 import (
-	"context"
 	"fmt"
-	"github.com/funnyecho/git-syncer/internal/scopex"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
@@ -36,63 +34,56 @@ func init() {
 	defer logger.Sync()
 }
 
-func Error(ctx context.Context, keyvals ...interface{})  {
-	verbose := scopex.UseVerbose(ctx)
-	if verbose < scopex.VerboseError {
+func Error(keyvals ...interface{})  {
+	if verbose < VerboseError {
 		return
 	}
 
 	logger.Error(keyvals...)
 }
 
-func Info(ctx context.Context, keyvals ...interface{}) {
-	verbose := scopex.UseVerbose(ctx)
-	if verbose < scopex.VerboseInfo {
+func Info(keyvals ...interface{}) {
+	if verbose < VerboseInfo {
 		return
 	}
 
 	logger.Info(keyvals...)
 }
 
-func Debug(ctx context.Context, keyvals ...interface{}) {
-	verbose := scopex.UseVerbose(ctx)
-	if verbose < scopex.VerboseDebug {
+func Debug(keyvals ...interface{}) {
+	if verbose < VerboseDebug {
 		return
 	}
 
 	logger.Debug(keyvals...)
 }
 
-func Errorw(ctx context.Context, msg string, keyvals ...interface{}) {
-	verbose := scopex.UseVerbose(ctx)
-	if verbose < scopex.VerboseError {
+func Errorw(msg string, keyvals ...interface{}) {
+	if verbose < VerboseError {
 		return
 	}
 
 	logger.Errorw(msg, keyvals...)
 }
 
-func Infow(ctx context.Context, msg string, keyvals ...interface{}) {
-	verbose := scopex.UseVerbose(ctx)
-	if verbose < scopex.VerboseInfo {
+func Infow(msg string, keyvals ...interface{}) {
+	if verbose < VerboseInfo {
 		return
 	}
 
 	logger.Infow(msg, keyvals...)
 }
 
-func Debugw(ctx context.Context, msg string, keyvals ...interface{}) {
-	verbose := scopex.UseVerbose(ctx)
-	if verbose < scopex.VerboseDebug {
+func Debugw(msg string, keyvals ...interface{}) {
+	if verbose < VerboseDebug {
 		return
 	}
 
 	logger.Debugw(msg, keyvals...)
 }
 
-func Errore(ctx context.Context, err error, keyvals ...interface{}) {
-	verbose := scopex.UseVerbose(ctx)
-	if verbose < scopex.VerboseError {
+func Errore(err error, keyvals ...interface{}) {
+	if verbose < VerboseError {
 		return
 	}
 

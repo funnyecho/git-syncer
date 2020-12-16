@@ -6,9 +6,6 @@ import (
 	"github.com/funnyecho/git-syncer/pkg/command"
 )
 
-// WithArgs type for define porcelain status arguments
-type WithArgs func() string
-
 // GetPorcelainStatus returning the short format status of repo
 func GetPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
 	return getPorcelainStatus(withArgs...)
