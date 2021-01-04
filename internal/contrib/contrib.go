@@ -1,7 +1,12 @@
 package contrib
 
 type Contrib interface {
-
+	CheckAccessible() error
+	GetHeadSHA1(remote string) (string, error)
+	Lock() error
+	Unlock() error
+	RLock() error
+	RUnlock() error
 }
 
 func WithContrib(c Contrib) {
@@ -9,9 +14,10 @@ func WithContrib(c Contrib) {
 }
 
 func UseContrib() Contrib {
+	if contrib == nil {
+		panic("contrib not existed")
+	}
 	return contrib
 }
 
-var contrib Contrib = &noopContrib{}
-
-type noopContrib struct {}
+var contrib Contrib

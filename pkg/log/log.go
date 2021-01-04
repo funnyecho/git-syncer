@@ -1,7 +1,6 @@
 package log
 
 import (
-	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
@@ -34,7 +33,7 @@ func init() {
 	defer logger.Sync()
 }
 
-func Error(keyvals ...interface{})  {
+func Error(keyvals ...interface{}) {
 	if verbose < VerboseError {
 		return
 	}
@@ -82,10 +81,10 @@ func Debugw(msg string, keyvals ...interface{}) {
 	logger.Debugw(msg, keyvals...)
 }
 
-func Errore(err error, keyvals ...interface{}) {
+func Errore(msg string, err error, keyvals ...interface{}) {
 	if verbose < VerboseError {
 		return
 	}
 
-	logger.Errorw(fmt.Sprintf("%v", err), keyvals...)
+	logger.Errorw(msg, append(keyvals, "err", err)...)
 }
