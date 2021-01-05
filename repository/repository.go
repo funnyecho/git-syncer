@@ -10,8 +10,8 @@ type Repository interface {
 
 	IsDirtyRepository() (bool, error)
 
-	ListAllFiles() ([]string, error)
-	ListChangedFiles() (upload []string, delete []string, err error)
+	ListAllFiles(syncRoot string) ([]string, error)
+	ListChangedFiles(syncRoot string) (upload []string, delete []string, err error)
 
 	SetHead(head string) error
 	SetupTempDir() (string, error)

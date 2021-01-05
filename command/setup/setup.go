@@ -46,17 +46,22 @@ func (c *cmd) Run(args []string) int {
 	}
 
 	var projectDir string
-	var currentHead, currentHeadSHA1 string
+	var currentHead string
 	var remoteHeadSHA1 string
 	var workingBranch string
 	var workingDir string
+	var workingHeadSHA1 string
+
+	var uploadFiles []string
 
 	// FIXME: temp to avoid `unused variables` error
 	_ = projectDir
-	_ = currentHeadSHA1
+	_ = workingHeadSHA1
 	_ = remoteHeadSHA1
 	_ = workingBranch
 	_ = workingDir
+
+	_ = uploadFiles
 
 	if gitMajorV, gitMinorV, gitVerErr := repo.GitVersion(); gitVerErr != nil {
 		log.Errore("Git haven't installed? ", gitVerErr)
@@ -118,10 +123,10 @@ func (c *cmd) Run(args []string) int {
 		log.Errorw("Can't not get local revision")
 		return exitcode.Git
 	} else {
-		currentHeadSHA1 = localSHA1
+		workingHeadSHA1 = localSHA1
 	}
 
-	if remoteSHA1, remoteSHA1Err := syncer.GetHeadSHA1(options.Remote); remoteSHA1Err != nil {
+	if remoteSHA1, remoteSHA1Err := syncer.GetHeadSHA1(); remoteSHA1Err != nil {
 		log.Errore("Failed to check remote is clean", remoteSHA1Err)
 		return exitcode.RemoteForbidden
 	} else if remoteSHA1 != "" {
@@ -150,6 +155,25 @@ func (c *cmd) Run(args []string) int {
 				panic(r)
 			}
 		}()
+	}
+
+	if allFiles, listFilesErr := repo.ListAllFiles(projectDir); listFilesErr != nil {
+		log.Errore("Failed to list files", listFilesErr)
+		return exitcode.Git
+	} else {
+		uploadFiles = allFiles
+	}
+
+	if uploadFilesErr := syncer.UploadFiles(uploadFiles); uploadFilesErr != nil {
+		// FIXME: try to rollback partial uploaded files
+		log.Errore("Failed to upload files", uploadFilesErr)
+		return exitcode.Upload
+	}
+
+	if setRemoteSHA1Err := syncer.SetHeadSHA1(workingHeadSHA1); setRemoteSHA1Err != nil {
+		// FIXME: maybe try to rollback uploaded files
+		log.Errore("Failed to set remote sha1", setRemoteSHA1Err)
+		return exitcode.Upload
 	}
 
 	return exitcode.Nil

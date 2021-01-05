@@ -29,7 +29,7 @@ func (r *repo) GetHead() (string, error) {
 		head = symbolicHead
 	} else if headRev := gitter.GetHead(); headRev != "" {
 		head = headRev
-	} else if localSHA1, localSHA1Err := r.GetHeadSHA1(); localSHA1Err == nil {
+	} else if localSHA1, localSHA1Err := gitter.GetHeadSHA1(); localSHA1Err == nil {
 		head = localSHA1
 	}
 
@@ -74,11 +74,11 @@ func (r *repo) IsDirtyRepository() (bool, error) {
 	return true, nil
 }
 
-func (r *repo) ListAllFiles() ([]string, error) {
-	return nil, nil
+func (r *repo) ListAllFiles(syncRoot string) ([]string, error) {
+	return gitter.ListFiles(syncRoot)
 }
 
-func (r *repo) ListChangedFiles() (upload []string, delete []string, err error) {
+func (r *repo) ListChangedFiles(syncRoot string) (upload []string, delete []string, err error) {
 	return
 }
 

@@ -2,7 +2,12 @@ package contrib
 
 type Contrib interface {
 	CheckAccessible() error
-	GetHeadSHA1(remote string) (string, error)
+	GetHeadSHA1() (string, error)
+
+	SetHeadSHA1(head string) error
+
+	UploadFiles(files []string) error
+
 	Lock() error
 	Unlock() error
 	RLock() error
