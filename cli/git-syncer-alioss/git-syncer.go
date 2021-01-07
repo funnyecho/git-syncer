@@ -10,6 +10,6 @@ import (
 
 func main() {
 	contrib.WithContrib(alioss.New())
-	repository.WithRepository(repo.New())
+	repository.WithRepository(gitrepo.New())
 	command.Run()
 }

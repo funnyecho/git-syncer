@@ -8,14 +8,21 @@ import (
 	"github.com/funnyecho/git-syncer/repository"
 )
 
-func New() *repo {
-	return &repo{}
+type Options struct {
+	WorkingDir string
+}
+
+func New(options Options) *repo {
+	return &repo{
+		Options: &options,
+	}
 }
 
 // Interface implement checking
 var _ repository.Repository = &repo{}
 
 type repo struct {
+	*Options
 }
 
 func (r *repo) GetConfig(keys ...string) (string, error) {

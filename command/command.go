@@ -19,7 +19,7 @@ func Run() {
 	c := cli.NewCLI("git-syncer", Version)
 	c.Args = os.Args[1:]
 
-	repository.PushRepository(repo.New())
+	repository.PushRepository(gitrepo.New())
 	defer func() {
 		repository.PopRepository(nil)
 	}()

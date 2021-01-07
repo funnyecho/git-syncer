@@ -4,8 +4,8 @@ import (
 	"github.com/funnyecho/git-syncer/pkg/command"
 )
 
-func GetHead() string {
-	cmd := command.Command("git", "rev-parse", "HEAD")
+func (g *git) GetHead() string {
+	cmd := g.command("git", "rev-parse", "HEAD")
 
 	v, err := cmd.Output()
 	if err != nil {

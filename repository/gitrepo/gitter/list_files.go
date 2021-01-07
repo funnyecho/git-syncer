@@ -5,11 +5,11 @@ import (
 	"strings"
 )
 
-func ListFiles(path string) ([]string, error) {
+func (g *git) ListFiles(path string) ([]string, error) {
 	if path == "" {
 		path = "."
 	}
-	cmd := command.Command("git", "ls-files", "-z", "--", path)
+	cmd := g.command("git", "ls-files", "-z", "--", path)
 
 	v, err := cmd.Output()
 	if err != nil {

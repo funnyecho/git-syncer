@@ -45,23 +45,11 @@ func (c *cmd) Run(args []string) int {
 		return exitcode.Usage
 	}
 
-	var projectDir string
 	var currentHead string
-	var remoteHeadSHA1 string
-	var workingBranch string
 	var workingDir string
 	var workingHeadSHA1 string
 
 	var uploadFiles []string
-
-	// FIXME: temp to avoid `unused variables` error
-	_ = projectDir
-	_ = workingHeadSHA1
-	_ = remoteHeadSHA1
-	_ = workingBranch
-	_ = workingDir
-
-	_ = uploadFiles
 
 	if gitMajorV, gitMinorV, gitVerErr := repo.GitVersion(); gitVerErr != nil {
 		log.Errore("Git haven't installed? ", gitVerErr)
@@ -71,11 +59,9 @@ func (c *cmd) Run(args []string) int {
 		return exitcode.Git
 	}
 
-	if repoDir, repoDirErr := repo.GetRepoDir(); repoDirErr != nil {
+	if _, repoDirErr := repo.GetRepoDir(); repoDirErr != nil {
 		log.Errore("not a git repository (or any of the parent directories): .git", repoDirErr)
 		return exitcode.Git
-	} else {
-		projectDir = repoDir
 	}
 
 	if repoDirty, repoDirtyErr := repo.IsDirtyRepository(); repoDirtyErr != nil || repoDirty {
@@ -132,8 +118,6 @@ func (c *cmd) Run(args []string) int {
 	} else if remoteSHA1 != "" {
 		log.Errorw("Commit found, use 'git syncer push' to sync")
 		return exitcode.Usage
-	} else {
-		remoteHeadSHA1 = remoteSHA1
 	}
 
 	if lockRemoteErr := syncer.Lock(); lockRemoteErr != nil {
@@ -157,7 +141,7 @@ func (c *cmd) Run(args []string) int {
 		}()
 	}
 
-	if allFiles, listFilesErr := repo.ListAllFiles(projectDir); listFilesErr != nil {
+	if allFiles, listFilesErr := repo.ListAllFiles(workingDir); listFilesErr != nil {
 		log.Errore("Failed to list files", listFilesErr)
 		return exitcode.Git
 	} else {

@@ -1,16 +1,15 @@
 package gitter
 
 import (
-	"github.com/funnyecho/git-syncer/pkg/command"
 	"strconv"
 	"strings"
 )
 
-func GetGitVersion() (majorVersion, minorVersion int, err error) {
+func (g *git) GetVersion() (majorVersion, minorVersion int, err error) {
 	majorVersion = 0
 	minorVersion = 0
 
-	cmd := command.Command("git", "--version")
+	cmd := g.command("git", "--version")
 
 	plainVersion, err := cmd.Output()
 	if err != nil {

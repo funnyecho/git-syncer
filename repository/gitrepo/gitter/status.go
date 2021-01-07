@@ -7,18 +7,18 @@ import (
 )
 
 // GetPorcelainStatus returning the short format status of repo
-func GetPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
-	return getPorcelainStatus(withArgs...)
+func (g *git) GetPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
+	return g.getPorcelainStatus(withArgs...)
 }
 
 // WithUnoPorcelainStatus specify `-uno` argument
-func WithUnoPorcelainStatus() WithArgs {
+func (g *git) WithUnoPorcelainStatus() WithArgs {
 	return func() string {
 		return "-uno"
 	}
 }
 
-func getPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
+func (g *git) getPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
 	args := []string{"status", "--porcelain"}
 
 	for _, fn := range withArgs {
@@ -26,7 +26,7 @@ func getPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
 		args = append(args, arg)
 	}
 
-	cmd := command.Command("git", args...)
+	cmd := g.command("git", args...)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

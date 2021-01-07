@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-func GetSymbolicHead() string {
-	cmd := command.Command("git", "symbolic-ref", "HEAD")
+func (g *git) GetSymbolicHead() string {
+	cmd := g.command("git", "symbolic-ref", "HEAD")
 
 	v, err := cmd.Output()
 	if err != nil {
