@@ -1,9 +1,5 @@
 package gitter
 
-import (
-	"github.com/funnyecho/git-syncer/pkg/command"
-)
-
 func (g *git) GetHead() string {
 	cmd := g.command("git", "rev-parse", "HEAD")
 

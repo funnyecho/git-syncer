@@ -1,7 +1,5 @@
 package gitter
 
-import "github.com/funnyecho/git-syncer/pkg/command"
-
 func (g *git) GetHeadSHA1() (string, error) {
 	cmd := g.command("git", "log", "-n 1", "--pretty=format:%H")
 

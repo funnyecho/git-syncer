@@ -1,11 +1,10 @@
 package gitter_test
 
 import (
+	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
 	"testing"
 
-	"github.com/funnyecho/git-syncer/pkg/command"
 	"github.com/funnyecho/git-syncer/pkg/command/commandtest"
-	"github.com/funnyecho/git-syncer/pkg/gitter"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,24 +33,21 @@ func TestPorcelainStatus(t *testing.T) {
 		commandtest.WithCommanderHelperName("TestGitPorcelainStatusCommandProcess"),
 	)
 
-	oriCommander := command.PopCommand()
-	defer command.PushCommand(oriCommander)
+	git := gitter.NewDefaultGitterWithCommander(mockCommander)
 
-	command.PushCommand(mockCommander)
-
-	status, err := gitter.GetPorcelainStatus()
+	status, err := git.GetPorcelainStatus()
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "exit status 2", err.Error())
 	assert.Empty(t, status)
 
-	status, err = gitter.GetPorcelainStatus()
+	status, err = git.GetPorcelainStatus()
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(status))
 	assert.Equal(t, "M .DS_Store/", status[0])
 	assert.Equal(t, "?? .vscode/", status[1])
 
-	status, err = gitter.GetPorcelainStatus(gitter.WithUnoPorcelainStatus())
+	status, err = git.GetPorcelainStatus(gitter.WithUnoPorcelainStatus())
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(status))
 	assert.Equal(t, "M .DS_Store/", status[0])

@@ -2,8 +2,6 @@ package gitter
 
 import (
 	"bufio"
-
-	"github.com/funnyecho/git-syncer/pkg/command"
 )
 
 // GetPorcelainStatus returning the short format status of repo
@@ -12,7 +10,7 @@ func (g *git) GetPorcelainStatus(withArgs ...WithArgs) (status []string, err err
 }
 
 // WithUnoPorcelainStatus specify `-uno` argument
-func (g *git) WithUnoPorcelainStatus() WithArgs {
+func WithUnoPorcelainStatus() WithArgs {
 	return func() string {
 		return "-uno"
 	}
@@ -52,5 +50,5 @@ func (g *git) getPorcelainStatus(withArgs ...WithArgs) (status []string, err err
 
 	err = cmd.Wait()
 
-	return status, nil
+	return status, err
 }

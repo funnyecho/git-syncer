@@ -22,13 +22,13 @@ func (g *git) ConfigGet(withArgs ...WithArgs) (string, error) {
 	return string(v), nil
 }
 
-func (g *git) WithConfigGetKey(key string) WithArgs {
+func WithConfigGetKey(key string) WithArgs {
 	return func() string {
 		return fmt.Sprintf("--get \"%s\"", key)
 	}
 }
 
-func (g *git) WithConfigGetFromFile(filePath string) WithArgs {
+func WithConfigGetFromFile(filePath string) WithArgs {
 	return func() string {
 		return fmt.Sprintf("-f '%s'", filePath)
 	}

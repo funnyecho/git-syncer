@@ -1,7 +1,6 @@
 package gitter
 
 import (
-	"github.com/funnyecho/git-syncer/pkg/command"
 	"strings"
 )
 

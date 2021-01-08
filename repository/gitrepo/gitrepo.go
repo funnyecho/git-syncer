@@ -33,12 +33,20 @@ func New(options ...WithOptions) (*repo, error) {
 
 	rp := &repo{
 		gitter: gt,
+		remote: o.workingRemote,
 	}
+
+	syncRootErr := rp.initSyncRoot()
+	if syncRootErr != nil {
+		return nil, syncRootErr
+	}
+
 	return rp, nil
 }
 
 type repo struct {
 	syncRoot string
+	remote   string
 	gitter   gitter2.Gitter
 }
 
@@ -47,6 +55,12 @@ var _ repository.Repository = &repo{}
 func WithWorkingDir(dir string) WithOptions {
 	return func(o *option) {
 		o.workingDir = dir
+	}
+}
+
+func WithWorkingRemote(remote string) WithOptions {
+	return func(o *option) {
+		o.workingRemote = remote
 	}
 }
 
@@ -59,6 +73,7 @@ func WithGitter(gt gitter2.Gitter) WithOptions {
 type WithOptions = func(*option)
 
 type option struct {
-	workingDir string
-	gitter     gitter2.Gitter
+	workingDir    string
+	workingRemote string
+	gitter        gitter2.Gitter
 }

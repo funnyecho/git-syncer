@@ -10,22 +10,17 @@ import (
 )
 
 func TestCommandStack(t *testing.T) {
-	assert.NotNil(t, command.Command)
-	compareCommander(t, command.Command, command.PopCommand())
-
-	oriCommand := command.PopCommand()
+	assert.NotNil(t, command.UseCommand())
 
 	fakeCommand := func(name string, args ...string) *exec.Cmd {
 		return exec.Command(name, args...)
 	}
 
-	command.PushCommand(fakeCommand)
-	compareCommander(t, fakeCommand, command.Command)
-	compareCommander(t, fakeCommand, command.PopCommand())
+	oriCommand := command.PushCommand(fakeCommand)
+	compareCommander(t, fakeCommand, command.UseCommand())
 
-	command.PushCommand(oriCommand)
-	compareCommander(t, oriCommand, command.Command)
-	compareCommander(t, oriCommand, command.PopCommand())
+	command.PopCommand(oriCommand)
+	compareCommander(t, oriCommand, command.UseCommand())
 }
 
 // refer to: [the work around for comparing function "equality"](https://github.com/stretchr/testify/issues/182#issuecomment-495359313)

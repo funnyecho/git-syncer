@@ -1,9 +1,8 @@
 package gitter_test
 
 import (
-	"github.com/funnyecho/git-syncer/pkg/command"
 	"github.com/funnyecho/git-syncer/pkg/command/commandtest"
-	"github.com/funnyecho/git-syncer/pkg/gitter"
+	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
 	. "github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -30,22 +29,19 @@ func TestGetGitVersion(t *testing.T) {
 		commandtest.WithCommanderHelperName("TestGitVersionCommandProcess"),
 	)
 
-	oriCommander := command.PopCommand()
-	defer command.PushCommand(oriCommander)
+	git := gitter.NewDefaultGitterWithCommander(mockCommander)
 
-	command.PushCommand(mockCommander)
-
-	majorV, minorV, err := gitter.GetGitVersion()
+	majorV, minorV, err := git.GetVersion()
 	Equal(t, 2, majorV)
 	Equal(t, 24, minorV)
 	Nil(t, err)
 
-	majorV, minorV, err = gitter.GetGitVersion()
+	majorV, minorV, err = git.GetVersion()
 	Equal(t, 1, majorV)
 	Equal(t, 1, minorV)
 	Nil(t, err)
 
-	majorV, minorV, err = gitter.GetGitVersion()
+	majorV, minorV, err = git.GetVersion()
 	Equal(t, 0, majorV)
 	Equal(t, 0, minorV)
 	Nil(t, err)

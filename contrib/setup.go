@@ -7,7 +7,10 @@ import (
 	"github.com/funnyecho/git-syncer/repository"
 )
 
-func Setup(c Contrib, repo repository.Files) error {
+func Setup(c Contrib, repo interface {
+	repository.Files
+	repository.Status
+}) error {
 	if sha1, sha1Err := c.GetHeadSHA1(); sha1Err != nil {
 		return errors.NewError(
 			errors.WithStatusCode(exitcode.RemoteForbidden),
@@ -18,6 +21,19 @@ func Setup(c Contrib, repo repository.Files) error {
 		return errors.NewError(
 			errors.WithStatusCode(exitcode.Usage),
 			errors.WithMsg("deployed commit found, use 'push' to sync."),
+		)
+	}
+
+	if isDirtyRepo, repoStatusErr := repo.IsDirtyRepository(); repoStatusErr != nil {
+		return errors.NewError(
+			errors.WithStatusCode(exitcode.Git),
+			errors.WithMsg("failed to get check repository status"),
+			errors.WithErr(repoStatusErr),
+		)
+	} else if isDirtyRepo {
+		return errors.NewError(
+			errors.WithStatusCode(exitcode.Git),
+			errors.WithMsg("dirty repository: Having uncommitted changes"),
 		)
 	}
 

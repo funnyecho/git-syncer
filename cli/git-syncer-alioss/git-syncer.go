@@ -2,14 +2,11 @@ package main
 
 import (
 	"github.com/funnyecho/git-syncer/command"
-	"github.com/funnyecho/git-syncer/internal/contrib"
-	"github.com/funnyecho/git-syncer/internal/contrib/alioss"
-	"github.com/funnyecho/git-syncer/repository"
-	"github.com/funnyecho/git-syncer/repository/repo"
+	"github.com/funnyecho/git-syncer/contrib"
+	"github.com/funnyecho/git-syncer/contrib/alioss"
 )
 
 func main() {
-	contrib.WithContrib(alioss.New())
-	repository.WithRepository(gitrepo.New())
+	contrib.WithFactory(alioss.NewContribFactory())
 	command.Run()
 }

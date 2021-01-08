@@ -3,29 +3,29 @@ package errors_test
 import (
 	stdErr "errors"
 	"fmt"
-	"github.com/funnyecho/git-syncer/constants"
+	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	. "github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestErrors(t *testing.T)  {
+func TestErrors(t *testing.T) {
 	plainErr := fmt.Errorf("plain err")
 	plainErr2 := fmt.Errorf("plain err 2")
-	
+
 	unknownErrWithWrappedErr := &errors.Error{
-		StatusCode: constants.ErrorStatusUnknown,
+		StatusCode: exitcode.Unknown,
 		Err:        plainErr,
 		Msg:        "unknown err with wrapped error",
 	}
 
 	unknownErrWithoutWrappedErr := &errors.Error{
-		StatusCode: constants.ErrorStatusUnknown,
+		StatusCode: exitcode.Unknown,
 		Msg:        "unknown err without wrapped error",
 	}
 
 	usageErrWithWrappedErr := &errors.Error{
-		StatusCode: constants.ErrorStatusUsage,
+		StatusCode: exitcode.Usage,
 		Err:        plainErr,
 		Msg:        "usage err with wrapped error",
 	}
@@ -56,7 +56,7 @@ func TestErrors(t *testing.T)  {
 
 		True(t, stdErr.As(plainErrWithWrappedError, &iErr))
 		NotNil(t, iErr)
-		Equal(t, constants.ErrorStatusUsage, iErr.StatusCode)
+		Equal(t, exitcode.Usage, iErr.StatusCode)
 	})
 
 	t.Run("errors.Unwrap", func(t *testing.T) {
@@ -69,18 +69,18 @@ func TestErrorsConstructor(t *testing.T) {
 	plainErr := fmt.Errorf("plain err")
 	err := errors.NewError()
 
-	Equal(t, constants.ErrorStatusNoError, err.StatusCode)
+	Equal(t, exitcode.Nil, err.StatusCode)
 	Empty(t, err.Msg)
 	Nil(t, err.Err)
 	Nil(t, err.Unwrap())
 
 	err = errors.NewError(
 		errors.WithErr(plainErr),
-		errors.WithStatusCode(constants.ErrorStatusMissingArguments),
+		errors.WithStatusCode(exitcode.MissingArguments),
 		errors.WithMsg("foobar"),
 	)
 
-	Equal(t, constants.ErrorStatusMissingArguments, err.StatusCode)
+	Equal(t, exitcode.MissingArguments, err.StatusCode)
 	Equal(t, "foobar", err.Msg)
 	Equal(t, plainErr, err.Err)
 	Equal(t, plainErr, err.Unwrap())

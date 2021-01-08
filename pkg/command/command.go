@@ -4,12 +4,20 @@ import "os/exec"
 
 type Commander = func(name string, args ...string) *exec.Cmd
 
-var Command = exec.Command
+var command = exec.Command
 
-func PopCommand() Commander {
-	return Command
+func UseCommand() Commander {
+	return command
 }
 
-func PushCommand(command Commander) {
-	Command = command
+func PopCommand(cmd Commander) {
+	command = cmd
+}
+
+func PushCommand(cmd Commander) Commander {
+	defer func() {
+		command = cmd
+	}()
+
+	return command
 }
