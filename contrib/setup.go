@@ -2,15 +2,14 @@ package contrib
 
 import (
 	"fmt"
+
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/repository"
 )
 
-func Setup(c Contrib, repo interface {
-	repository.Files
-	repository.Status
-}) error {
+// Setup setup command handler
+func Setup(c Contrib, repo repository.Files) error {
 	if sha1, sha1Err := c.GetHeadSHA1(); sha1Err != nil {
 		return errors.NewError(
 			errors.WithStatusCode(exitcode.RemoteForbidden),
@@ -24,25 +23,12 @@ func Setup(c Contrib, repo interface {
 		)
 	}
 
-	if isDirtyRepo, repoStatusErr := repo.IsDirtyRepository(); repoStatusErr != nil {
-		return errors.NewError(
-			errors.WithStatusCode(exitcode.Git),
-			errors.WithMsg("failed to get check repository status"),
-			errors.WithErr(repoStatusErr),
-		)
-	} else if isDirtyRepo {
-		return errors.NewError(
-			errors.WithStatusCode(exitcode.Git),
-			errors.WithMsg("dirty repository: Having uncommitted changes"),
-		)
-	}
-
 	repoSha1, files, filesErr := repo.ListAllFiles()
 	if filesErr != nil {
 		return filesErr
 	}
 
-	res, syncErr := c.Sync(SyncReq{
+	res, syncErr := c.Sync(&SyncReq{
 		SHA1:    repoSha1,
 		Uploads: files,
 		Deletes: nil,

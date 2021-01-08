@@ -1,8 +1,9 @@
 package gitter_test
 
 import (
-	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
 	"testing"
+
+	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
 
 	"github.com/funnyecho/git-syncer/pkg/command/commandtest"
 	"github.com/stretchr/testify/assert"

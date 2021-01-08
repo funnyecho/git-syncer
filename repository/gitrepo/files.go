@@ -1,12 +1,26 @@
 package gitrepo
 
 import (
+	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 )
 
 func (r *repo) ListAllFiles() (sha1 string, uploads []string, err error) {
 	if gitVErr := r.validateGitVersion(); gitVErr != nil {
 		return "", nil, gitVErr
+	}
+
+	if isDirtyRepo, repoStatusErr := r.IsDirtyRepository(); repoStatusErr != nil {
+		return "", nil, errors.NewError(
+			errors.WithStatusCode(exitcode.Git),
+			errors.WithMsg("failed to get check repository status"),
+			errors.WithErr(repoStatusErr),
+		)
+	} else if isDirtyRepo {
+		return "", nil, errors.NewError(
+			errors.WithStatusCode(exitcode.Git),
+			errors.WithMsg("dirty repository: Having uncommitted changes"),
+		)
 	}
 
 	sha1, sha1Err := r.GetHeadSHA1()

@@ -23,6 +23,6 @@ func (a *alioss) GetHeadSHA1() (string, error) {
 	panic("implement me")
 }
 
-func (a *alioss) Sync(reqx contrib.SyncReq) (contrib.SyncRes, error) {
+func (a *alioss) Sync(reqx *contrib.SyncReq) (contrib.SyncRes, error) {
 	panic("implement me")
 }
