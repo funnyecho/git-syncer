@@ -2,12 +2,13 @@ package gitrepo
 
 import (
 	"fmt"
+
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/pkg/fs"
 )
 
-func (r *repo) initSyncRoot() error {
+func (r *repo) InitSyncRoot() error {
 	root, _ := r.GetConfig("sync_root")
 	if root == "" {
 		root = "./assets"
