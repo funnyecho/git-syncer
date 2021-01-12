@@ -2,8 +2,8 @@ package gitter_test
 
 import "github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
 
-// NewMockGitter new mock gitter
-func NewMockGitter() gitter.Gitter {
+// New new mock gitter
+func New() gitter.Gitter {
 	return &git{}
 }
 
@@ -16,6 +16,10 @@ func (g *git) Checkout(head string) error {
 
 func (g *git) ConfigGet(withArgs ...gitter.WithArgs) (string, error) {
 	return "", nil
+}
+
+func (g *git) ConfigSet(withArgs ...gitter.WithArgs) error {
+	return nil
 }
 
 func (g *git) GetHead() string {

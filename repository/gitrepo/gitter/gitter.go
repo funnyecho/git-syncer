@@ -21,6 +21,7 @@ func NewDefaultGitterWithCommander(cmd command.Commander) Gitter {
 type Gitter interface {
 	Checkout(head string) error
 	ConfigGet(withArgs ...WithArgs) (string, error)
+	ConfigSet(withArgs ...WithArgs) error
 	GetHead() string
 	GetHeadSHA1() (string, error)
 	GetPorcelainStatus(withArgs ...WithArgs) (status []string, err error)

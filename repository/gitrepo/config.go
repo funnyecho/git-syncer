@@ -2,6 +2,7 @@ package gitrepo
 
 import (
 	"fmt"
+
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/pkg/fs"
@@ -18,7 +19,7 @@ func (r *repo) GetConfig(keys ...string) (string, error) {
 }
 
 func (r *repo) SetConfig(key, value string) error {
-	panic("implement me")
+	return r.setConfig(key, value)
 }
 
 func (r *repo) getConfig(keys []string) (val string, err error) {
@@ -35,7 +36,7 @@ func (r *repo) getConfig(keys []string) (val string, err error) {
 		if remote != "" {
 			if pcExisted {
 				val, err = r.gitter.ConfigGet(
-					gitter.WithConfigGetFromFile(projectConfigName),
+					gitter.WithConfigFile(projectConfigName),
 					gitter.WithConfigGetKey(fmt.Sprintf("%s.%s.%s", configKeyPrefix, remote, key)),
 				)
 				if val != "" {
@@ -53,7 +54,7 @@ func (r *repo) getConfig(keys []string) (val string, err error) {
 
 		if pcExisted {
 			val, err = r.gitter.ConfigGet(
-				gitter.WithConfigGetFromFile(projectConfigName),
+				gitter.WithConfigFile(projectConfigName),
 				gitter.WithConfigGetKey(fmt.Sprintf("%s.%s", configKeyPrefix, key)),
 			)
 			if val != "" {
@@ -73,4 +74,33 @@ func (r *repo) getConfig(keys []string) (val string, err error) {
 		errors.WithStatusCode(exitcode.Usage),
 		errors.WithMsg(fmt.Sprintf("failed to get config: %v", keys)),
 	)
+}
+
+func (r *repo) setConfig(key, value string) error {
+	pcExisted, _ := fs.IsFileExists(projectConfigName)
+	remote := r.remote
+
+	if remote != "" {
+		if pcExisted {
+			return r.gitter.ConfigSet(
+				gitter.WithConfigFile(projectConfigName),
+				gitter.WithConfigSetKeyValue(fmt.Sprintf("%s.%s.%s", configKeyPrefix, remote, key), value),
+			)
+		} else {
+			return r.gitter.ConfigSet(
+				gitter.WithConfigSetKeyValue(fmt.Sprintf("%s.%s.%s", configKeyPrefix, remote, key), value),
+			)
+		}
+	} else {
+		if pcExisted {
+			return r.gitter.ConfigSet(
+				gitter.WithConfigFile(projectConfigName),
+				gitter.WithConfigSetKeyValue(fmt.Sprintf("%s.%s", configKeyPrefix, key), value),
+			)
+		} else {
+			return r.gitter.ConfigSet(
+				gitter.WithConfigSetKeyValue(fmt.Sprintf("%s.%s", configKeyPrefix, key), value),
+			)
+		}
+	}
 }
