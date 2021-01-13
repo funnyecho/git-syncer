@@ -4,13 +4,13 @@ import (
 	"strings"
 )
 
-func (g *git) GetSymbolicHead() string {
+func (g *git) GetSymbolicHead() (string, error) {
 	cmd := g.command("git", "symbolic-ref", "HEAD")
 
 	v, err := cmd.Output()
 	if err != nil {
-		return ""
+		return "", err
 	}
 
-	return strings.TrimPrefix(string(v), "refs/heads/")
+	return strings.TrimPrefix(string(v), "refs/heads/"), nil
 }

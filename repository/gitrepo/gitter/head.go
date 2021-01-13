@@ -1,12 +1,12 @@
 package gitter
 
-func (g *git) GetHead() string {
+func (g *git) GetHead() (string, error) {
 	cmd := g.command("git", "rev-parse", "HEAD")
 
 	v, err := cmd.Output()
 	if err != nil {
-		return ""
+		return "", err
 	}
 
-	return string(v)
+	return string(v), nil
 }

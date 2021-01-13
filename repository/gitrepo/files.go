@@ -10,7 +10,7 @@ func (r *repo) ListAllFiles() (sha1 string, uploads []string, err error) {
 		return "", nil, gitVErr
 	}
 
-	if isDirtyRepo, repoStatusErr := r.IsDirtyRepository(); repoStatusErr != nil {
+	if isDirtyRepo, repoStatusErr := IsDirtyRepository(r.gitter); repoStatusErr != nil {
 		return "", nil, errors.NewError(
 			errors.WithStatusCode(exitcode.Git),
 			errors.WithMsg("failed to get check repository status"),
@@ -28,7 +28,7 @@ func (r *repo) ListAllFiles() (sha1 string, uploads []string, err error) {
 		return "", nil, sha1Err
 	}
 
-	files, filesErr := r.gitter.ListFiles(r.GetSyncRoot())
+	files, filesErr := r.gitter.ListFiles(GetSyncRoot(r))
 	if filesErr != nil {
 		return "", nil, filesErr
 	}

@@ -26,9 +26,9 @@ type Gitter interface {
 	Status
 
 	Checkout(head string) error
-	GetHead() string
+	GetHead() (string, error)
 	GetHeadSHA1() (string, error)
-	GetSymbolicHead() string
+	GetSymbolicHead() (string, error)
 	GetVersion() (majorVersion, minorVersion int, err error)
 
 	ListFiles(path string) ([]string, error)
