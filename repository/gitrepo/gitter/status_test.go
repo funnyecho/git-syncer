@@ -48,7 +48,7 @@ func TestPorcelainStatus(t *testing.T) {
 	assert.Equal(t, "M .DS_Store/", status[0])
 	assert.Equal(t, "?? .vscode/", status[1])
 
-	status, err = git.GetPorcelainStatus(gitter.WithUnoPorcelainStatus())
+	status, err = git.GetUnoPorcelainStatus()
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(status))
 	assert.Equal(t, "M .DS_Store/", status[0])

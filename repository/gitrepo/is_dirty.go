@@ -1,9 +1,7 @@
 package gitrepo
 
-import "github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
-
 func (r *repo) IsDirtyRepository() (bool, error) {
-	status, err := r.gitter.GetPorcelainStatus(gitter.WithUnoPorcelainStatus())
+	status, err := r.gitter.GetUnoPorcelainStatus()
 	if err != nil {
 		return false, err
 	}

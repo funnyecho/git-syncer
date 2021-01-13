@@ -5,25 +5,23 @@ import (
 
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
-	"github.com/funnyecho/git-syncer/pkg/fs"
 	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
 )
 
 const (
-	configKeyPrefix   = "git-syncer"
-	projectConfigName = ".git-syncer-config"
+	// ProjectConfigName project leve config without prefix
+	ProjectConfigName = ".git-syncer-config"
 )
 
-func (r *repo) GetConfig(keys ...string) (string, error) {
-	return r.getConfig(keys)
+func (r *repo) GetConfig(key string) (string, error) {
+	return r.getConfig(key)
 }
 
 func (r *repo) SetConfig(key, value string) error {
 	return r.setConfig(key, value)
 }
 
-func (r *repo) getConfig(keys []string) (val string, err error) {
-	pcExisted, _ := fs.IsFileExists(projectConfigName)
+func (r *repo) getConfig(key string) (val string, err error) {
 	remote := r.remote
 
 	defer func() {
@@ -32,75 +30,52 @@ func (r *repo) getConfig(keys []string) (val string, err error) {
 		}
 	}()
 
-	for _, key := range keys {
-		if remote != "" {
-			if pcExisted {
-				val, err = r.gitter.ConfigGet(
-					gitter.WithConfigFile(projectConfigName),
-					gitter.WithConfigGetKey(fmt.Sprintf("%s.%s.%s", configKeyPrefix, remote, key)),
-				)
-				if val != "" {
-					return
-				}
-			}
-
-			val, err = r.gitter.ConfigGet(
-				gitter.WithConfigGetKey(fmt.Sprintf("%s.%s.%s", configKeyPrefix, remote, key)),
-			)
-			if val != "" {
-				return
-			}
-		}
-
-		if pcExisted {
-			val, err = r.gitter.ConfigGet(
-				gitter.WithConfigFile(projectConfigName),
-				gitter.WithConfigGetKey(fmt.Sprintf("%s.%s", configKeyPrefix, key)),
-			)
-			if val != "" {
-				return
-			}
-		}
-
+	if remote != "" {
 		val, err = r.gitter.ConfigGet(
-			gitter.WithConfigGetKey(fmt.Sprintf("%s.%s", configKeyPrefix, key)),
+			fmt.Sprintf("%s.%s", remote, key),
+			gitter.ConfigGetOptions{
+				File: ProjectConfigName,
+			},
 		)
 		if val != "" {
 			return
 		}
 	}
 
+	val, err = r.gitter.ConfigGet(
+		key,
+		gitter.ConfigGetOptions{
+			File: ProjectConfigName,
+		},
+	)
+	if val != "" {
+		return
+	}
+
 	return "", errors.NewError(
 		errors.WithStatusCode(exitcode.Usage),
-		errors.WithMsg(fmt.Sprintf("failed to get config: %v", keys)),
+		errors.WithMsg(fmt.Sprintf("failed to get config: %s", key)),
 	)
 }
 
 func (r *repo) setConfig(key, value string) error {
-	pcExisted, _ := fs.IsFileExists(projectConfigName)
 	remote := r.remote
 
 	if remote != "" {
-		if pcExisted {
-			return r.gitter.ConfigSet(
-				gitter.WithConfigFile(projectConfigName),
-				gitter.WithConfigSetKeyValue(fmt.Sprintf("%s.%s.%s", configKeyPrefix, remote, key), value),
-			)
-		} else {
-			return r.gitter.ConfigSet(
-				gitter.WithConfigSetKeyValue(fmt.Sprintf("%s.%s.%s", configKeyPrefix, remote, key), value),
-			)
-		}
-	} else {
-		if pcExisted {
-			return r.gitter.ConfigSet(
-				gitter.WithConfigFile(projectConfigName),
-				gitter.WithConfigSetKeyValue(fmt.Sprintf("%s.%s", configKeyPrefix, key), value),
-			)
-		} else {
-			return r.gitter.ConfigSet(
-				gitter.WithConfigSetKeyValue(fmt.Sprintf("%s.%s", configKeyPrefix, key), value),
-			)
-		}
+		return r.gitter.ConfigSet(
+			fmt.Sprintf("%s.%s", remote, key),
+			value,
+			gitter.ConfigSetOptions{
+				File: ProjectConfigName,
+			},
+		)
 	}
+
+	return r.gitter.ConfigSet(
+		key,
+		value,
+		gitter.ConfigSetOptions{
+			File: ProjectConfigName,
+		},
+	)
 }

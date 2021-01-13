@@ -4,13 +4,30 @@ import (
 	"fmt"
 )
 
-func (g *git) ConfigGet(withArgs ...WithArgs) (string, error) {
+// ConfigGetOptions config getter options
+type ConfigGetOptions struct {
+	File string
+}
+
+// ConfigSetOptions config setter options
+type ConfigSetOptions struct {
+	File string
+}
+
+// Config config reader and writer
+type Config interface {
+	ConfigGet(key string, options ConfigGetOptions) (string, error)
+	ConfigSet(key, value string, options ConfigSetOptions) error
+}
+
+func (g *git) ConfigGet(key string, options ConfigGetOptions) (string, error) {
 	args := []string{"config"}
 
-	for _, fn := range withArgs {
-		arg := fn()
-		args = append(args, arg)
+	if options.File != "" {
+		args = append(args, fmt.Sprintf("-f %s", options.File))
 	}
+
+	args = append(args, fmt.Sprintf("--get %s", key))
 
 	cmd := g.command("git", args...)
 
@@ -22,13 +39,14 @@ func (g *git) ConfigGet(withArgs ...WithArgs) (string, error) {
 	return string(v), nil
 }
 
-func (g *git) ConfigSet(withArgs ...WithArgs) error {
+func (g *git) ConfigSet(key, value string, options ConfigSetOptions) error {
 	args := []string{"config"}
 
-	for _, fn := range withArgs {
-		arg := fn()
-		args = append(args, arg)
+	if options.File != "" {
+		args = append(args, fmt.Sprintf("-f %s", options.File))
 	}
+
+	args = append(args, fmt.Sprintf("%s %s", key, value))
 
 	cmd := g.command("git", args...)
 
@@ -38,25 +56,4 @@ func (g *git) ConfigSet(withArgs ...WithArgs) error {
 	}
 
 	return nil
-}
-
-// WithConfigFile use config file
-func WithConfigFile(filePath string) WithArgs {
-	return func() string {
-		return fmt.Sprintf("-f '%s'", filePath)
-	}
-}
-
-// WithConfigSetKeyValue wrap to setter args
-func WithConfigSetKeyValue(key, value string) WithArgs {
-	return func() string {
-		return fmt.Sprintf("\"%s\" %s", key, value)
-	}
-}
-
-// WithConfigGetKey wrap to get getter args
-func WithConfigGetKey(key string) WithArgs {
-	return func() string {
-		return fmt.Sprintf("--get \"%s\"", key)
-	}
 }

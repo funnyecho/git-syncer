@@ -30,11 +30,6 @@ func New(options ...WithOptions) (repository.Repository, error) {
 		remote: o.WorkingRemote,
 	}
 
-	syncRootErr := rp.InitSyncRoot()
-	if syncRootErr != nil {
-		return nil, syncRootErr
-	}
-
 	return rp, nil
 }
 

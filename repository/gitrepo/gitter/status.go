@@ -4,24 +4,34 @@ import (
 	"bufio"
 )
 
+// statusOptions git status options
+type statusOptions struct {
+	Uno bool
+}
+
+// Status git status reader interface
+type Status interface {
+	GetPorcelainStatus() (status []string, err error)
+	GetUnoPorcelainStatus() (status []string, err error)
+}
+
 // GetPorcelainStatus returning the short format status of repo
-func (g *git) GetPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
-	return g.getPorcelainStatus(withArgs...)
+func (g *git) GetPorcelainStatus() (status []string, err error) {
+	return g.getPorcelainStatus(statusOptions{})
 }
 
-// WithUnoPorcelainStatus specify `-uno` argument
-func WithUnoPorcelainStatus() WithArgs {
-	return func() string {
-		return "-uno"
-	}
+// GetUnoPorcelainStatus returning the short format status of repo with `-uno` argument
+func (g *git) GetUnoPorcelainStatus() (status []string, err error) {
+	return g.getPorcelainStatus(statusOptions{
+		Uno: true,
+	})
 }
 
-func (g *git) getPorcelainStatus(withArgs ...WithArgs) (status []string, err error) {
+func (g *git) getPorcelainStatus(options statusOptions) (status []string, err error) {
 	args := []string{"status", "--porcelain"}
 
-	for _, fn := range withArgs {
-		arg := fn()
-		args = append(args, arg)
+	if options.Uno {
+		args = append(args, "-uno")
 	}
 
 	cmd := g.command("git", args...)

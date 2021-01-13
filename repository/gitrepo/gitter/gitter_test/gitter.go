@@ -14,11 +14,11 @@ func (g *git) Checkout(head string) error {
 	return nil
 }
 
-func (g *git) ConfigGet(withArgs ...gitter.WithArgs) (string, error) {
+func (g *git) ConfigGet(key string, options gitter.ConfigGetOptions) (string, error) {
 	return "", nil
 }
 
-func (g *git) ConfigSet(withArgs ...gitter.WithArgs) error {
+func (g *git) ConfigSet(key, val string, options gitter.ConfigSetOptions) error {
 	return nil
 }
 
@@ -30,7 +30,11 @@ func (g *git) GetHeadSHA1() (string, error) {
 	return "", nil
 }
 
-func (g *git) GetPorcelainStatus(withArgs ...gitter.WithArgs) (status []string, err error) {
+func (g *git) GetPorcelainStatus() (status []string, err error) {
+	return nil, nil
+}
+
+func (g *git) GetUnoPorcelainStatus() (status []string, err error) {
 	return nil, nil
 }
 
@@ -44,4 +48,8 @@ func (g *git) GetVersion() (majorVersion, minorVersion int, err error) {
 
 func (g *git) ListFiles(path string) ([]string, error) {
 	return nil, nil
+}
+
+func (g *git) IsFileExisted(path string) (bool, error) {
+	return false, nil
 }

@@ -4,10 +4,12 @@ import (
 	"github.com/funnyecho/git-syncer/pkg/command"
 )
 
+// NewDefaultGitter new default gitter with default commander
 func NewDefaultGitter() Gitter {
 	return NewDefaultGitterWithCommander(nil)
 }
 
+// NewDefaultGitterWithCommander new default gitter with specific commander
 func NewDefaultGitterWithCommander(cmd command.Commander) Gitter {
 	if cmd == nil {
 		cmd = command.UseCommand()
@@ -18,21 +20,19 @@ func NewDefaultGitterWithCommander(cmd command.Commander) Gitter {
 	}
 }
 
+// Gitter interface to interact with git repo
 type Gitter interface {
+	Config
+	Status
+
 	Checkout(head string) error
-	ConfigGet(withArgs ...WithArgs) (string, error)
-	ConfigSet(withArgs ...WithArgs) error
 	GetHead() string
 	GetHeadSHA1() (string, error)
-	GetPorcelainStatus(withArgs ...WithArgs) (status []string, err error)
 	GetSymbolicHead() string
 	GetVersion() (majorVersion, minorVersion int, err error)
 
 	ListFiles(path string) ([]string, error)
 }
-
-// WithArgs type for define arguments
-type WithArgs func() string
 
 type git struct {
 	command command.Commander

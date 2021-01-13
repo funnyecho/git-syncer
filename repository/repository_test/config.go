@@ -18,15 +18,13 @@ type mockConfigReadWriter struct {
 	configs map[string]string
 }
 
-func (m *mockConfigReadWriter) GetConfig(keys ...string) (string, error) {
-	for _, key := range keys {
-		v, isExisted := m.configs[key]
-		if isExisted {
-			return v, nil
-		}
+func (m *mockConfigReadWriter) GetConfig(key string) (string, error) {
+	v, isExisted := m.configs[key]
+	if !isExisted {
+		return "", fmt.Errorf("config not found: key=%s", key)
 	}
 
-	return "", fmt.Errorf("config not found: keys=%v", keys)
+	return v, nil
 }
 
 func (m *mockConfigReadWriter) SetConfig(key, value string) error {
