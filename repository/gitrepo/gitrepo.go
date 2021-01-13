@@ -34,9 +34,8 @@ func New(options ...WithOptions) (repository.Repository, error) {
 }
 
 type repo struct {
-	syncRoot string
-	remote   string
-	gitter   gitter2.Gitter
+	remote string
+	gitter gitter2.Gitter
 }
 
 // WithWorkingDir change working dir

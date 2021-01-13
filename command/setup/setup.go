@@ -3,6 +3,8 @@ package setup
 import (
 	stderrors "errors"
 	"flag"
+	"fmt"
+
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/contrib"
 	"github.com/funnyecho/git-syncer/pkg/errors"
@@ -51,6 +53,20 @@ func (c *cmd) Run(args []string) (ext int) {
 	if repoErr != nil {
 		log.Errore("failed setup git repo", repoErr)
 		return exitcode.Git
+	}
+
+	if options.Branch != "" {
+		head, checkoutErr := repo.PushHead(options.Branch)
+		if checkoutErr != nil {
+			log.Errore(fmt.Sprintf("failed to checkout to branch: %s", options.Branch), checkoutErr)
+			return exitcode.Git
+		}
+		defer func() {
+			checkoutErr := repo.PopHead(head)
+			if checkoutErr != nil {
+				log.Errore(fmt.Sprintf("failed to reset to head: %s", head), checkoutErr)
+			}
+		}()
 	}
 
 	ct := contrib.UseFactory()(repo)

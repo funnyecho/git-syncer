@@ -13,6 +13,11 @@ const (
 	ProjectConfigName = ".git-syncer-config"
 )
 
+const (
+	// ConfigSyncRoot sync_root key in config file
+	ConfigSyncRoot = "sync_root"
+)
+
 func (r *repo) GetConfig(key string) (string, error) {
 	return r.getConfig(key)
 }

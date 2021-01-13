@@ -10,15 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type configTestGitter struct {
-	gitter.Gitter
-	configGet func(key string, options gitter.ConfigGetOptions) (string, error)
-}
-
-func (g *configTestGitter) ConfigGet(key string, options gitter.ConfigGetOptions) (string, error) {
-	return g.configGet(key, options)
-}
-
 func TestConfigReader(t *testing.T) {
 	tcs := []struct {
 		name        string
@@ -71,10 +62,9 @@ func TestConfigReader(t *testing.T) {
 			hit: func(key string) (string, error) {
 				if key == "foo" {
 					return "return foo", nil
-				} else {
-					assert.Fail(t, "shall only step into `foo` statement")
 				}
 
+				assert.Fail(t, "shall only step into `foo` statement")
 				return "", fmt.Errorf("config not found")
 			},
 			expectValue: "return foo",
@@ -137,4 +127,13 @@ func TestConfigReader(t *testing.T) {
 
 func TestConfigWriter(t *testing.T) {
 
+}
+
+type configTestGitter struct {
+	gitter.Gitter
+	configGet func(key string, options gitter.ConfigGetOptions) (string, error)
+}
+
+func (g *configTestGitter) ConfigGet(key string, options gitter.ConfigGetOptions) (string, error) {
+	return g.configGet(key, options)
 }

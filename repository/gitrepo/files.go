@@ -28,7 +28,7 @@ func (r *repo) ListAllFiles() (sha1 string, uploads []string, err error) {
 		return "", nil, sha1Err
 	}
 
-	files, filesErr := r.gitter.ListFiles(r.syncRoot)
+	files, filesErr := r.gitter.ListFiles(r.GetSyncRoot())
 	if filesErr != nil {
 		return "", nil, filesErr
 	}
@@ -43,7 +43,7 @@ func (r *repo) ListChangedFiles(baseSha1 string) (sha1 string, uploads []string,
 func (r *repo) validateGitVersion() error {
 	if gitMajorV, gitMinorV, gitVerErr := r.gitter.GetVersion(); gitVerErr != nil {
 		return errors.NewError(errors.WithMsg("Git haven't installed? "), errors.WithErr(gitVerErr))
-	} else if gitMajorV < 2 && gitMinorV < 7 {
+	} else if gitMajorV < 1 || (gitMajorV < 2 && gitMinorV < 7) {
 		return errors.NewError(errors.WithMsg("git is too old, 1.7.0 or higher supported only"))
 	}
 

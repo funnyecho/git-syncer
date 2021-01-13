@@ -7,8 +7,8 @@ func (r *repo) IsDirtyRepository() (bool, error) {
 	}
 
 	if len(status) > 0 {
-		return false, nil
+		return true, nil
 	}
 
-	return true, nil
+	return false, nil
 }
