@@ -43,7 +43,7 @@ func WithWorkingDir(dir string) WithOptions {
 	return func(o *Option) error {
 		if err := os.Chdir(dir); err != nil {
 			return errors.NewError(
-				errors.WithStatusCode(exitcode.Filesystem),
+				errors.WithStatusCode(exitcode.Usage),
 				errors.WithErr(err),
 				errors.WithMsg(fmt.Sprintf("failed to change working dir to %s", dir)),
 			)

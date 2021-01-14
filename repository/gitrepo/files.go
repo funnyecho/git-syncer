@@ -12,13 +12,12 @@ func (r *repo) ListAllFiles() (sha1 string, uploads []string, err error) {
 
 	if isDirtyRepo, repoStatusErr := IsDirtyRepository(r.gitter); repoStatusErr != nil {
 		return "", nil, errors.NewError(
-			errors.WithStatusCode(exitcode.Git),
 			errors.WithMsg("failed to get check repository status"),
 			errors.WithErr(repoStatusErr),
 		)
 	} else if isDirtyRepo {
 		return "", nil, errors.NewError(
-			errors.WithStatusCode(exitcode.Git),
+			errors.WithStatusCode(exitcode.RepoDirty),
 			errors.WithMsg("dirty repository: Having uncommitted changes"),
 		)
 	}

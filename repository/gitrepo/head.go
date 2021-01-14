@@ -17,7 +17,7 @@ func (r *repo) GetHead() (string, error) {
 	}
 
 	if head == "" {
-		return "", errors.NewError(errors.WithStatusCode(exitcode.Git), errors.WithMsg("failed to get repo head"))
+		return "", errors.NewError(errors.WithStatusCode(exitcode.RepoHeadNotFound), errors.WithMsg("failed to get repo head"))
 	}
 
 	return head, nil
@@ -31,7 +31,7 @@ func (r *repo) GetHeadSHA1() (string, error) {
 	}
 
 	if sha1 == "" {
-		return "", errors.NewError(errors.WithStatusCode(exitcode.Git), errors.WithMsg("failed to get repo head sha1"))
+		return "", errors.NewError(errors.WithStatusCode(exitcode.RepoHeadNotFound), errors.WithMsg("failed to get repo head sha1"))
 	}
 
 	return sha1, nil

@@ -1,12 +1,48 @@
 package exitcode
 
 const (
+	// Nil mean successfully
 	Nil = iota
-	Unknown
+)
+
+const (
+	// Unknown unknown error
+	Unknown = 100 + iota
+
+	// Usage invalid usage
 	Usage
+
+	// MissingArguments missing required arguments
 	MissingArguments
-	Upload
-	RemoteForbidden
-	Filesystem
-	Git
+)
+
+const (
+	// RepoUnknown unknown error
+	RepoUnknown = 200 + iota
+
+	// RepoCheckoutFailed failed to checkout to head
+	RepoCheckoutFailed
+
+	// RepoDirty repository is dirty
+	RepoDirty
+
+	// RepoHeadNotFound repository head not found
+	RepoHeadNotFound
+
+	// RepoListFilesFailed list repo files failed
+	RepoListFilesFailed
+)
+
+const (
+	// ContribUnknown unknown error
+	ContribUnknown = 300 + iota
+
+	// ContribForbidden forbidden
+	ContribForbidden
+
+	// ContribHeadNotFound head not found
+	ContribHeadNotFound
+
+	// ContribSyncFailed failed to sync
+	ContribSyncFailed
 )

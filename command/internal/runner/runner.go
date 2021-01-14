@@ -41,14 +41,14 @@ func Run(name string, args []string, withTaps ...WithTap) int {
 	)
 	if repoErr != nil {
 		log.Errore("failed setup git repo", repoErr)
-		return exitcode.Git
+		return exitcode.RepoUnknown
 	}
 
 	if options.Branch != "" {
 		head, checkoutErr := repo.PushHead(options.Branch)
 		if checkoutErr != nil {
 			log.Errore(fmt.Sprintf("failed to checkout to branch: %s", options.Branch), checkoutErr)
-			return exitcode.Git
+			return exitcode.RepoCheckoutFailed
 		}
 		defer func() {
 			checkoutErr := repo.PopHead(head)
