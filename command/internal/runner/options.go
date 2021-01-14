@@ -1,4 +1,4 @@
-package setup
+package runner
 
 type Options struct {
 	Base   string `flag:"base" usage:"Base dir path to run syncer"`

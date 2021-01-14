@@ -62,10 +62,11 @@ func TestSetup(t *testing.T) {
 	}
 
 	for _, tc := range tcs {
-		cb := &mockSetupContrib{
-			headSHA1:    tc.contribHeadSha1,
-			syncHandler: tc.contribSyncFile,
+		cb := &mockContrib{
+			tc.contribHeadSha1,
+			tc.contribSyncFile,
 		}
+
 		rp := &mockSetupRepo{
 			listFiles: tc.repoListFiles,
 		}
@@ -84,7 +85,7 @@ func TestSetup(t *testing.T) {
 		repoSha1 := "foobar"
 		toBeUploads := []string{"foo", "bar", "zoo"}
 
-		cb := &mockSetupContrib{
+		cb := &mockContrib{
 			syncHandler: func(req *contrib.SyncReq) (contrib.SyncRes, error) {
 				assert.Equal(t, repoSha1, req.SHA1)
 				assert.Equal(t, toBeUploads, req.Uploads)
@@ -93,6 +94,7 @@ func TestSetup(t *testing.T) {
 				return contrib.SyncRes{}, nil
 			},
 		}
+
 		rp := &mockSetupRepo{
 			listFiles: func() (sha1 string, uploads []string, err error) {
 				return repoSha1, toBeUploads, nil
@@ -118,25 +120,4 @@ func (r *mockSetupRepo) ListAllFiles() (sha1 string, uploads []string, err error
 
 func (r *mockSetupRepo) ListChangedFiles(baseSha1 string) (sha1 string, uploads []string, deletes []string, err error) {
 	panic("please implement me")
-}
-
-type mockSetupContrib struct {
-	headSHA1    ContribHeadSha1Fetcher
-	syncHandler ContribSyncHandler
-}
-
-func (c *mockSetupContrib) GetHeadSHA1() (string, error) {
-	if c.headSHA1 == nil {
-		return "", nil
-	}
-
-	return c.headSHA1()
-}
-
-func (c *mockSetupContrib) Sync(req *contrib.SyncReq) (contrib.SyncRes, error) {
-	if c.syncHandler == nil {
-		return contrib.SyncRes{}, nil
-	}
-
-	return c.syncHandler(req)
 }
