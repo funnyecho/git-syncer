@@ -1,32 +1,44 @@
 package catchup
 
 import (
-	"github.com/funnyecho/git-syncer/command/internal/runner"
+	"fmt"
+
+	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/contrib"
+	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/repository"
-	"github.com/mitchellh/cli"
 )
 
-// Factory of command `catchup`
-func Factory() (cli.Command, error) {
-	return &cmd{}, nil
-}
+// Catchup catchup contrib with repo head
+func Catchup(c contrib.Contrib, r repository.HeadReader) error {
+	sha1, sha1Err := r.GetHeadSHA1()
 
-type cmd struct {
-}
+	if sha1Err != nil {
+		return errors.NewError(
+			errors.WithMsg("failed to get repo sha1"),
+			errors.WithErr(sha1Err),
+		)
+	} else if sha1 == "" {
+		return errors.NewError(
+			errors.WithCode(exitcode.RepoHeadNotFound),
+			errors.WithMsg("repo sha1 can't be empty"),
+		)
+	}
 
-func (c *cmd) Help() string {
-	return "Creates or updates the `.git-ftp.log` file on the remote contrib.\n" +
-		"It assumes that you uploaded all other files already.\n" +
-		"You might have done that with another program."
-}
+	res, syncErr := c.Sync(&contrib.SyncReq{
+		SHA1:    sha1,
+		Uploads: nil,
+		Deletes: nil,
+	})
+	if syncErr != nil {
+		return errors.NewError(
+			errors.WithCode(exitcode.ContribSyncFailed),
+			errors.WithMsg(fmt.Sprintln(
+				"failed to sync sha1 of repo. try catchup later",
+				fmt.Sprintf("deployedSHA1: %s", res.SHA1),
+			)),
+		)
+	}
 
-func (c *cmd) Synopsis() string {
-	return "Creates or updates the `.git-ftp.log` file on the remote contrib."
-}
-
-func (c *cmd) Run(args []string) int {
-	return runner.Run("catchup", args, runner.WithTapCommand(func(r repository.Repository, c contrib.Contrib) error {
-		return contrib.Catchup(c, r)
-	}))
+	return nil
 }

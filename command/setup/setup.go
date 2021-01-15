@@ -1,32 +1,49 @@
 package setup
 
 import (
-	"github.com/funnyecho/git-syncer/command/internal/runner"
-	"github.com/funnyecho/git-syncer/contrib"
-	"github.com/funnyecho/git-syncer/repository"
+	"fmt"
 
-	"github.com/mitchellh/cli"
+	"github.com/funnyecho/git-syncer/constants/exitcode"
+	"github.com/funnyecho/git-syncer/contrib"
+	"github.com/funnyecho/git-syncer/pkg/errors"
+	"github.com/funnyecho/git-syncer/repository"
 )
 
-// Factory of command `setup`
-func Factory() (cli.Command, error) {
-	return &cmd{}, nil
-}
+// Setup setup command handler
+func Setup(c contrib.Contrib, repo repository.Files) error {
+	if sha1, sha1Err := c.GetHeadSHA1(); sha1Err != nil {
+		return errors.NewError(
+			errors.WithMsg("failed to get deployed sha1"),
+			errors.WithErr(sha1Err),
+		)
+	} else if sha1 != "" {
+		return errors.NewError(
+			errors.WithCode(exitcode.Usage),
+			errors.WithMsg("deployed commit found, use 'push' to sync."),
+		)
+	}
 
-type cmd struct {
-}
+	repoSha1, files, filesErr := repo.ListAllFiles()
+	if filesErr != nil {
+		return filesErr
+	}
 
-func (c *cmd) Help() string {
-	return "Uploads all git-tracked non-ignored files to the remote contrib and " +
-		"creates the `.git-syncer.log` file containing the SHA1 of the latest commit."
-}
+	res, syncErr := c.Sync(&contrib.SyncReq{
+		SHA1:    repoSha1,
+		Uploads: files,
+		Deletes: nil,
+	})
+	if syncErr != nil {
+		return errors.NewError(
+			errors.WithCode(exitcode.ContribSyncFailed),
+			errors.WithMsg(fmt.Sprintln(
+				"failed to sync all files of repo. try setup later",
+				fmt.Sprintf("deployedSHA1: %s", res.SHA1),
+				fmt.Sprintf("uploaded files: %v", res.Uploaded),
+				fmt.Sprintf("deleted files: %v", res.Deleted),
+			)),
+		)
+	}
 
-func (c *cmd) Synopsis() string {
-	return "Setup remote contrib to the latest commit of repo"
-}
-
-func (c *cmd) Run(args []string) (ext int) {
-	return runner.Run("setup", args, runner.WithTapCommand(func(r repository.Repository, c contrib.Contrib) error {
-		return contrib.Setup(c, r)
-	}))
+	return nil
 }

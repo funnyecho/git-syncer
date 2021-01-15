@@ -6,7 +6,7 @@ import (
 
 	"github.com/funnyecho/git-syncer/repository/gitrepo"
 	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
-	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gitter_test"
+	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gittertest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -92,7 +92,7 @@ func TestListAllFiles(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			repo, _ := gitrepo.New(
 				gitrepo.WithGitter(&filesTestGitter{
-					gitter_test.New(),
+					gittertest.New(),
 					tc.syncRoot,
 					tc.getHeadSHA1,
 					tc.getUnoPorcelainStatus,
@@ -246,7 +246,7 @@ func TestListChangedFiles(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			repo, _ := gitrepo.New(
 				gitrepo.WithGitter(&filesTestGitter{
-					gitter_test.New(),
+					gittertest.New(),
 					tc.syncRoot,
 					tc.getHeadSHA1,
 					tc.getUnoPorcelainStatus,

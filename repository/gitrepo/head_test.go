@@ -6,7 +6,7 @@ import (
 
 	"github.com/funnyecho/git-syncer/repository/gitrepo"
 	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
-	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gitter_test"
+	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gittertest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -84,7 +84,7 @@ func TestHeadReader(t *testing.T) {
 			t.Run(tc.name, func(t *testing.T) {
 				repo, _ := gitrepo.New(
 					gitrepo.WithGitter(&headTestGitter{
-						gitter_test.New(),
+						gittertest.New(),
 						nil,
 						tc.getHead,
 						tc.getHeadSHA1,
@@ -138,7 +138,7 @@ func TestHeadReader(t *testing.T) {
 			t.Run(tc.name, func(t *testing.T) {
 				repo, _ := gitrepo.New(
 					gitrepo.WithGitter(&headTestGitter{
-						gitter_test.New(),
+						gittertest.New(),
 						nil,
 						nil,
 						tc.getHeadSHA1,

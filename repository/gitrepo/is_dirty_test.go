@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/funnyecho/git-syncer/repository/gitrepo"
-	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gitter_test"
+	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gittertest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -52,7 +52,7 @@ func TestIsDirtyRepository(t *testing.T) {
 
 	for _, tc := range tcs {
 		gitter := &filesTestGitter{
-			Gitter:                gitter_test.New(),
+			Gitter:                gittertest.New(),
 			getUnoPorcelainStatus: tc.getUnoPorcelainStatus,
 		}
 

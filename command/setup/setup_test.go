@@ -1,11 +1,13 @@
-package contrib_test
+package setup_test
 
 import (
 	stdErr "errors"
 	"testing"
 
+	"github.com/funnyecho/git-syncer/command/setup"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/contrib"
+	"github.com/funnyecho/git-syncer/contrib/contribtest"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,9 +15,9 @@ import (
 func TestSetup(t *testing.T) {
 	tcs := []struct {
 		name            string
-		contribHeadSha1 ContribHeadSha1Fetcher
-		contribSyncFile ContribSyncHandler
-		repoListFiles   RepoListAllFiles
+		contribHeadSha1 contribtest.ContribHeadSha1Fetcher
+		contribSyncFile contribtest.ContribSyncHandler
+		repoListFiles   contribtest.RepoListAllFiles
 		err             error
 	}{
 		{
@@ -62,9 +64,9 @@ func TestSetup(t *testing.T) {
 	}
 
 	for _, tc := range tcs {
-		cb := &mockContrib{
-			tc.contribHeadSha1,
-			tc.contribSyncFile,
+		cb := &contribtest.MockContrib{
+			HeadSHA1:    tc.contribHeadSha1,
+			SyncHandler: tc.contribSyncFile,
 		}
 
 		rp := &mockSetupRepo{
@@ -72,7 +74,7 @@ func TestSetup(t *testing.T) {
 		}
 
 		t.Run(tc.name, func(t *testing.T) {
-			e := contrib.Setup(cb, rp)
+			e := setup.Setup(cb, rp)
 			if tc.err == nil {
 				assert.Nil(t, e)
 			} else {
@@ -85,8 +87,8 @@ func TestSetup(t *testing.T) {
 		repoSha1 := "foobar"
 		toBeUploads := []string{"foo", "bar", "zoo"}
 
-		cb := &mockContrib{
-			syncHandler: func(req *contrib.SyncReq) (contrib.SyncRes, error) {
+		cb := &contribtest.MockContrib{
+			SyncHandler: func(req *contrib.SyncReq) (contrib.SyncRes, error) {
 				assert.Equal(t, repoSha1, req.SHA1)
 				assert.Equal(t, toBeUploads, req.Uploads)
 				assert.Nil(t, req.Deletes)
@@ -101,13 +103,13 @@ func TestSetup(t *testing.T) {
 			},
 		}
 
-		e := contrib.Setup(cb, rp)
+		e := setup.Setup(cb, rp)
 		assert.Nil(t, e)
 	})
 }
 
 type mockSetupRepo struct {
-	listFiles RepoListAllFiles
+	listFiles contribtest.RepoListAllFiles
 }
 
 func (r *mockSetupRepo) ListAllFiles() (sha1 string, uploads []string, err error) {

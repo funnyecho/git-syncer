@@ -1,36 +1,54 @@
 package push
 
 import (
-	"github.com/funnyecho/git-syncer/command/internal/runner"
+	"fmt"
+
+	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/contrib"
+	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/repository"
-	"github.com/mitchellh/cli"
 )
 
-// Factory of command `push`
-func Factory() (cli.Command, error) {
-	return &cmd{}, nil
-}
+// Push push changed and deleted files to contrib
+func Push(c contrib.Contrib, r repository.Files) error {
+	contribHead, contribHeadErr := c.GetHeadSHA1()
+	if contribHeadErr != nil {
+		return errors.NewError(
+			errors.WithMsg("failed to get contrib head sha1"),
+			errors.WithErr(contribHeadErr),
+		)
+	} else if contribHead == "" {
+		return errors.NewError(
+			errors.WithMsg("contrib head is empty, try `setup` command instead"),
+			errors.WithCode(exitcode.ContribHeadNotFound),
+		)
+	}
 
-type cmd struct {
-}
+	repoSHA1, uploads, deletes, diffErr := r.ListChangedFiles(contribHead)
+	if diffErr != nil {
+		return errors.NewError(
+			errors.WithMsg(fmt.Sprintf("failed to diff files from head contrib:%s to repo", contribHead)),
+			errors.WithErr(diffErr),
+		)
+	}
 
-func (c *cmd) Help() string {
-	return `Uploads files that have changed and
-deletes files that have been deleted since the last upload.
-If you are using GIT LFS, this uploads LFS link files, 
-not large files (stored on LFS server). 
-To upload the LFS tracked files, run "git lfs pull"
-before "git ftp push": LFS link files will be replaced with 
-large files so they can be uploaded.`
-}
+	res, syncErr := c.Sync(&contrib.SyncReq{
+		SHA1:    repoSHA1,
+		Uploads: uploads,
+		Deletes: deletes,
+	})
 
-func (c *cmd) Synopsis() string {
-	return "Push changed files to remote contrib"
-}
+	if syncErr != nil {
+		return errors.NewError(
+			errors.WithCode(exitcode.ContribSyncFailed),
+			errors.WithMsg(fmt.Sprintln(
+				"failed to sync changed files of repo. try later",
+				fmt.Sprintf("deployedSHA1: %s", res.SHA1),
+				fmt.Sprintf("uploaded files: %v", res.Uploaded),
+				fmt.Sprintf("deleted files: %v", res.Deleted),
+			)),
+		)
+	}
 
-func (c *cmd) Run(args []string) int {
-	return runner.Run("push", args, runner.WithTapCommand(func(r repository.Repository, c contrib.Contrib) error {
-		return contrib.Push(c, r)
-	}))
+	return nil
 }

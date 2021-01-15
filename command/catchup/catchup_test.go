@@ -1,18 +1,20 @@
-package contrib_test
+package catchup_test
 
 import (
 	"fmt"
 	"testing"
 
+	"github.com/funnyecho/git-syncer/command/catchup"
 	"github.com/funnyecho/git-syncer/contrib"
+	"github.com/funnyecho/git-syncer/contrib/contribtest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCatchup(t *testing.T) {
 	tcs := []struct {
 		name          string
-		repoHeadSHA1  RepoGetHeadSHA1
-		contribSyncer ContribSyncHandler
+		repoHeadSHA1  contribtest.RepoGetHeadSHA1
+		contribSyncer contribtest.ContribSyncHandler
 		expectErred   bool
 	}{
 		{
@@ -59,9 +61,9 @@ func TestCatchup(t *testing.T) {
 				assert.Nil(t, sr.Deletes)
 
 				return contrib.SyncRes{
-					"abcd1234",
-					nil,
-					nil,
+					SHA1:     "abcd1234",
+					Uploaded: nil,
+					Deleted:  nil,
 				}, nil
 			},
 			false,
@@ -70,10 +72,10 @@ func TestCatchup(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			err := contrib.Catchup(
-				&mockContrib{
-					nil,
-					tc.contribSyncer,
+			err := catchup.Catchup(
+				&contribtest.MockContrib{
+					HeadSHA1:    nil,
+					SyncHandler: tc.contribSyncer,
 				},
 				&mockCatchupRepo{
 					tc.repoHeadSHA1,
@@ -89,7 +91,7 @@ func TestCatchup(t *testing.T) {
 }
 
 type mockCatchupRepo struct {
-	getHeadSHA1 RepoGetHeadSHA1
+	getHeadSHA1 contribtest.RepoGetHeadSHA1
 }
 
 func (m *mockCatchupRepo) GetHead() (string, error) {

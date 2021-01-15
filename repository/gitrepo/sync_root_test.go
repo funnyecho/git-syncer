@@ -5,7 +5,7 @@ import (
 
 	"github.com/funnyecho/git-syncer/repository/gitrepo"
 	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
-	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gitter_test"
+	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gittertest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +35,7 @@ func TestGetSyncRoot(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			repo, _ := gitrepo.New(
 				gitrepo.WithGitter(&configTestGitter{
-					gitter_test.New(),
+					gittertest.New(),
 					tc.configGet,
 				}),
 			)

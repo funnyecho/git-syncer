@@ -1,4 +1,4 @@
-package gitter_test
+package gittertest
 
 import "github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
 

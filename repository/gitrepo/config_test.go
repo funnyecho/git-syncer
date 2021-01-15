@@ -6,7 +6,7 @@ import (
 
 	"github.com/funnyecho/git-syncer/repository/gitrepo"
 	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
-	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gitter_test"
+	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter/gittertest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -104,7 +104,7 @@ func TestConfigReader(t *testing.T) {
 			repo, _ := gitrepo.New(
 				gitrepo.WithWorkingRemote(tc.remote),
 				gitrepo.WithGitter(&configTestGitter{
-					gitter_test.New(),
+					gittertest.New(),
 					func(key string, options gitter.ConfigGetOptions) (string, error) {
 						assert.Equal(t, gitrepo.ProjectConfigName, options.File)
 
