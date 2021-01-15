@@ -17,7 +17,7 @@ func Setup(c Contrib, repo repository.Files) error {
 		)
 	} else if sha1 != "" {
 		return errors.NewError(
-			errors.WithStatusCode(exitcode.Usage),
+			errors.WithCode(exitcode.Usage),
 			errors.WithMsg("deployed commit found, use 'push' to sync."),
 		)
 	}
@@ -34,7 +34,7 @@ func Setup(c Contrib, repo repository.Files) error {
 	})
 	if syncErr != nil {
 		return errors.NewError(
-			errors.WithStatusCode(exitcode.ContribSyncFailed),
+			errors.WithCode(exitcode.ContribSyncFailed),
 			errors.WithMsg(fmt.Sprintln(
 				"failed to sync all files of repo. try setup later",
 				fmt.Sprintf("deployedSHA1: %s", res.SHA1),

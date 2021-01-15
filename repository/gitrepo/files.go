@@ -17,7 +17,7 @@ func (r *repo) ListAllFiles() (sha1 string, uploads []string, err error) {
 		)
 	} else if isDirtyRepo {
 		return "", nil, errors.NewError(
-			errors.WithStatusCode(exitcode.RepoDirty),
+			errors.WithCode(exitcode.RepoDirty),
 			errors.WithMsg("dirty repository: Having uncommitted changes"),
 		)
 	}

@@ -58,7 +58,7 @@ func (r *repo) getConfig(key string) (val string, err error) {
 	}
 
 	return "", errors.NewError(
-		errors.WithStatusCode(exitcode.Usage),
+		errors.WithCode(exitcode.Usage),
 		errors.WithMsg(fmt.Sprintf("failed to get config: %s", key)),
 	)
 }

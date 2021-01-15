@@ -10,9 +10,9 @@ import (
 // Error stacked error with status code
 // [Working with Errors in Go 1.13](https://blog.golang.org/go1.13-errors)
 type Error struct {
-	StatusCode int
-	Err        error
-	Msg        string
+	Code int
+	Err  error
+	Msg  string
 }
 
 // Unwrap implement `Unwrap`
@@ -23,10 +23,10 @@ func (e *Error) Unwrap() error {
 // No need to print wrapped error, `go` print it automatically
 func (e *Error) Error() string {
 	if e.Msg == "" {
-		return fmt.Sprintf("status code: %d", e.StatusCode)
+		return fmt.Sprintf("status code: %d", e.Code)
 	}
 
-	return fmt.Sprintf("status code: %d, error msg: %s", e.StatusCode, e.Msg)
+	return fmt.Sprintf("status code: %d, error msg: %s", e.Code, e.Msg)
 }
 
 // Is implement `Is`
@@ -36,8 +36,8 @@ func (e *Error) Is(target error) bool {
 		return false
 	}
 
-	eCode := GetStatusCode(e)
-	tCode := GetStatusCode(t)
+	eCode := GetErrorCode(e)
+	tCode := GetErrorCode(t)
 
 	return tCode > 0 && eCode == tCode
 }
@@ -49,7 +49,7 @@ func (e *Error) As(target error) bool {
 		return false
 	}
 
-	return GetStatusCode(t) > 0
+	return GetErrorCode(t) > 0
 }
 
 type errorOption = func(err *Error)
@@ -64,10 +64,10 @@ func NewError(options ...errorOption) *Error {
 	return err
 }
 
-// WithStatusCode with status code
-func WithStatusCode(code int) errorOption {
+// WithCode with status code
+func WithCode(code int) errorOption {
 	return func(err *Error) {
-		err.StatusCode = code
+		err.Code = code
 	}
 }
 
@@ -85,8 +85,8 @@ func WithErr(wrapErr error) errorOption {
 	}
 }
 
-// GetStatusCode get status code of error
-func GetStatusCode(err error) int {
+// GetErrorCode get status code of error
+func GetErrorCode(err error) int {
 	if err == nil {
 		return exitcode.Unknown
 	}
@@ -98,10 +98,10 @@ func GetStatusCode(err error) int {
 		return exitcode.Unknown
 	}
 
-	code := errWithCode.StatusCode
+	code := errWithCode.Code
 	if code > 0 {
 		return code
 	}
 
-	return GetStatusCode(errWithCode.Unwrap())
+	return GetErrorCode(errWithCode.Unwrap())
 }

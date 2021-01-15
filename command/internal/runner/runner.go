@@ -71,7 +71,7 @@ func Run(name string, args []string, withTaps ...WithTap) int {
 				return exitcode.Unknown
 			}
 
-			return e.StatusCode
+			return e.Code
 		}
 	}
 

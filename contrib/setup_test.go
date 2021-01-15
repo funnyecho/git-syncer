@@ -22,11 +22,11 @@ func TestSetup(t *testing.T) {
 			name: "failed to get deployed head sha1",
 			contribHeadSha1: func() (string, error) {
 				return "", errors.NewError(
-					errors.WithStatusCode(exitcode.ContribUnknown),
+					errors.WithCode(exitcode.ContribUnknown),
 				)
 			},
 			err: errors.NewError(
-				errors.WithStatusCode(exitcode.ContribUnknown),
+				errors.WithCode(exitcode.ContribUnknown),
 			),
 		},
 		{
@@ -35,18 +35,18 @@ func TestSetup(t *testing.T) {
 				return "contrib-sha1", nil
 			},
 			err: errors.NewError(
-				errors.WithStatusCode(exitcode.Usage),
+				errors.WithCode(exitcode.Usage),
 			),
 		},
 		{
 			name: "failed to get repo files",
 			repoListFiles: func() (sha1 string, uploads []string, err error) {
 				return "", nil, errors.NewError(
-					errors.WithStatusCode(exitcode.RepoListFilesFailed),
+					errors.WithCode(exitcode.RepoListFilesFailed),
 				)
 			},
 			err: errors.NewError(
-				errors.WithStatusCode(exitcode.RepoListFilesFailed),
+				errors.WithCode(exitcode.RepoListFilesFailed),
 			),
 		},
 		{
@@ -55,9 +55,9 @@ func TestSetup(t *testing.T) {
 				return "Foobar", []string{"foo", "bar", "zoo"}, nil
 			},
 			contribSyncFile: func(req *contrib.SyncReq) (contrib.SyncRes, error) {
-				return contrib.SyncRes{}, errors.NewError(errors.WithStatusCode(exitcode.ContribSyncFailed))
+				return contrib.SyncRes{}, errors.NewError(errors.WithCode(exitcode.ContribSyncFailed))
 			},
-			err: errors.NewError(errors.WithStatusCode(exitcode.ContribSyncFailed)),
+			err: errors.NewError(errors.WithCode(exitcode.ContribSyncFailed)),
 		},
 	}
 

@@ -19,7 +19,7 @@ func Catchup(c Contrib, r repository.HeadReader) error {
 		)
 	} else if sha1 == "" {
 		return errors.NewError(
-			errors.WithStatusCode(exitcode.RepoHeadNotFound),
+			errors.WithCode(exitcode.RepoHeadNotFound),
 			errors.WithMsg("repo sha1 can't be empty"),
 		)
 	}
@@ -31,7 +31,7 @@ func Catchup(c Contrib, r repository.HeadReader) error {
 	})
 	if syncErr != nil {
 		return errors.NewError(
-			errors.WithStatusCode(exitcode.ContribSyncFailed),
+			errors.WithCode(exitcode.ContribSyncFailed),
 			errors.WithMsg(fmt.Sprintln(
 				"failed to sync sha1 of repo. try catchup later",
 				fmt.Sprintf("deployedSHA1: %s", res.SHA1),
