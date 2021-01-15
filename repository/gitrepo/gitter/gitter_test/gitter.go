@@ -49,3 +49,11 @@ func (g *git) GetVersion() (majorVersion, minorVersion int, err error) {
 func (g *git) ListFiles(path string) ([]string, error) {
 	return nil, nil
 }
+
+func (g *git) DiffAM(path string, commit string) ([]string, error) {
+	return nil, nil
+}
+
+func (g *git) DiffD(path string, commit string) ([]string, error) {
+	return nil, nil
+}

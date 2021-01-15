@@ -31,6 +31,9 @@ const (
 
 	// RepoListFilesFailed list repo files failed
 	RepoListFilesFailed
+
+	// RepoDiffBaseNotFound basic commit to diff is empty
+	RepoDiffBaseNotFound
 )
 
 const (

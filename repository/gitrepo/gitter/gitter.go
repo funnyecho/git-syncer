@@ -32,6 +32,8 @@ type Gitter interface {
 	GetVersion() (majorVersion, minorVersion int, err error)
 
 	ListFiles(path string) ([]string, error)
+
+	Diff
 }
 
 type git struct {

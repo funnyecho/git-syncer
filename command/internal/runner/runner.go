@@ -4,8 +4,6 @@ import (
 	"flag"
 	"fmt"
 
-	stderrors "errors"
-
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/contrib"
 	"github.com/funnyecho/git-syncer/pkg/errors"
@@ -65,13 +63,7 @@ func Run(name string, args []string, withTaps ...WithTap) int {
 		if cmdErr != nil {
 			log.Errore("run command failed", cmdErr, "cmdName", name)
 
-			var e *errors.Error
-			stderrors.As(cmdErr, &e)
-			if e == nil {
-				return exitcode.Unknown
-			}
-
-			return e.Code
+			return errors.GetErrorCode(cmdErr)
 		}
 	}
 

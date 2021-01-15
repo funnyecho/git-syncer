@@ -1,6 +1,8 @@
 package gitrepo
 
 import (
+	"github.com/funnyecho/git-syncer/constants/exitcode"
+	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/repository/gitrepo/gitter"
 )
 
@@ -8,7 +10,7 @@ import (
 func IsDirtyRepository(git gitter.Status) (bool, error) {
 	status, err := git.GetUnoPorcelainStatus()
 	if err != nil {
-		return false, err
+		return false, errors.NewError(errors.WithCode(exitcode.RepoUnknown), errors.WithErr(err))
 	}
 
 	if len(status) > 0 {

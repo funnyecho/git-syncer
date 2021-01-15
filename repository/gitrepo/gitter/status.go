@@ -4,11 +4,6 @@ import (
 	"bufio"
 )
 
-// statusOptions git status options
-type statusOptions struct {
-	Uno bool
-}
-
 // Status git status reader interface
 type Status interface {
 	GetPorcelainStatus() (status []string, err error)
@@ -25,6 +20,11 @@ func (g *git) GetUnoPorcelainStatus() (status []string, err error) {
 	return g.getPorcelainStatus(statusOptions{
 		Uno: true,
 	})
+}
+
+// statusOptions git status options
+type statusOptions struct {
+	Uno bool
 }
 
 func (g *git) getPorcelainStatus(options statusOptions) (status []string, err error) {

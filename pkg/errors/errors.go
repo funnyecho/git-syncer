@@ -78,6 +78,13 @@ func WithMsg(msg string) errorOption {
 	}
 }
 
+// WithMsgf with formattable error msg
+func WithMsgf(msg string, args ...interface{}) errorOption {
+	return func(err *Error) {
+		err.Msg = fmt.Sprintf(msg, args...)
+	}
+}
+
 // WithErr with wrap error
 func WithErr(wrapErr error) errorOption {
 	return func(err *Error) {
