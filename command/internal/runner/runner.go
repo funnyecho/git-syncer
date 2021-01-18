@@ -4,10 +4,10 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/funnyecho/git-syncer/command/internal/flagparser"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/contrib"
 	"github.com/funnyecho/git-syncer/pkg/errors"
-	"github.com/funnyecho/git-syncer/pkg/flagbinder"
 	"github.com/funnyecho/git-syncer/pkg/log"
 	"github.com/funnyecho/git-syncer/repository"
 	"github.com/funnyecho/git-syncer/repository/gitrepo"
@@ -23,13 +23,9 @@ func Run(name string, args []string, withTaps ...WithTap) int {
 	flags := flag.NewFlagSet(name, flag.ContinueOnError)
 
 	var options Options
-	if bindFlagErr := flagbinder.Bind(&options, flags); bindFlagErr != nil {
-		log.Errore("Failed to bind flag", bindFlagErr)
-		return exitcode.Unknown
-	}
 
-	if flagErr := flags.Parse(args); flagErr != nil {
-		log.Errore("Failed to parse flags", flagErr)
+	if argParseErr := flagparser.Parser(&options, flags)(args); argParseErr != nil {
+		log.Errore("Failed to parse flags", argParseErr)
 		return exitcode.Usage
 	}
 

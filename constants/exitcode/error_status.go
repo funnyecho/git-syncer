@@ -34,6 +34,9 @@ const (
 
 	// RepoDiffBaseNotFound basic commit to diff is empty
 	RepoDiffBaseNotFound
+
+	// RepoConfigNotFound config not found
+	RepoConfigNotFound
 )
 
 const (
