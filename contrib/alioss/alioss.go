@@ -4,9 +4,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/contrib"
+	"github.com/funnyecho/git-syncer/contrib/alioss/bucket"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/pkg/fs"
 	"github.com/funnyecho/git-syncer/pkg/log"
@@ -23,15 +23,20 @@ func NewContribFactory() contrib.Factory {
 			return nil, ossOptionsErr
 		}
 
-		ossClient, ossClientErr := oss.New(ossOptions.Endpoint, ossOptions.AccessKeyID, ossOptions.AccessKeySecret)
-		if ossClientErr != nil {
-			return nil, ossClientErr
+		bucket, bucketErr := bucket.New(&bucket.Options{
+			Endpoint:        ossOptions.Endpoint,
+			Bucket:          ossOptions.Bucket,
+			AccessKeyID:     ossOptions.AccessKeyID,
+			AccessKeySecret: ossOptions.AccessKeySecret,
+		})
+		if bucketErr != nil {
+			return nil, bucketErr
 		}
 
 		c := &Alioss{
 			configurable,
 			ossOptions,
-			ossClient,
+			bucket,
 		}
 
 		return c, nil
@@ -41,9 +46,8 @@ func NewContribFactory() contrib.Factory {
 // Alioss alioss contrib
 type Alioss struct {
 	*contrib.Configurable
-	options *Options
-
-	client *oss.Client
+	*Options
+	bucket.Bucket
 }
 
 // GetHeadSHA1 get head sha1 from alioss contrib

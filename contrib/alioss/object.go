@@ -9,23 +9,13 @@ import (
 
 // getObject get object in bucket
 func (a *Alioss) getObject(path string) (io.ReadCloser, error) {
-	bucket, bucketErr := a.client.Bucket(a.options.Bucket)
-	if bucketErr != nil {
-		return nil, bucketErr
-	}
-
-	return bucket.GetObject(a.pathToKey(path), nil)
+	return a.Bucket.GetObject(a.pathToKey(path), nil)
 }
 
 // uploadObject upload object
 func (a *Alioss) uploadObject(path string, stream io.Reader) (string, error) {
-	bucket, bucketErr := a.client.Bucket(a.options.Bucket)
-	if bucketErr != nil {
-		return "", bucketErr
-	}
-
 	key := a.pathToKey(path)
-	uploadErr := bucket.PutObject(
+	uploadErr := a.Bucket.PutObject(
 		key,
 		stream,
 	)
@@ -33,7 +23,7 @@ func (a *Alioss) uploadObject(path string, stream io.Reader) (string, error) {
 	if uploadErr != nil {
 		return "", errors.NewError(
 			errors.WithErr(uploadErr),
-			errors.WithMsgf("failed to upload file %s to bucket %s", path, bucket.BucketName),
+			errors.WithMsgf("failed to upload file %s to bucket %s", path, a.Options.Bucket),
 		)
 	}
 
@@ -42,14 +32,9 @@ func (a *Alioss) uploadObject(path string, stream io.Reader) (string, error) {
 
 // deleteObject delete object
 func (a *Alioss) deleteObject(path string) (string, error) {
-	bucket, bucketErr := a.client.Bucket(a.options.Bucket)
-	if bucketErr != nil {
-		return "", bucketErr
-	}
-
 	key := a.pathToKey(path)
 
-	deleteErr := bucket.DeleteObject(key)
+	deleteErr := a.Bucket.DeleteObject(key)
 	if deleteErr != nil {
 		return "", deleteErr
 	}
@@ -62,12 +47,7 @@ func (a *Alioss) isObjectExisted(path string) (bool, error) {
 		return false, errors.NewError(errors.WithMsg("path is required to check whether object exited"), errors.WithCode(exitcode.MissingArguments))
 	}
 
-	bucket, bucketErr := a.client.Bucket(a.options.Bucket)
-	if bucketErr != nil {
-		return false, bucketErr
-	}
-
-	return bucket.IsObjectExist(a.pathToKey(path))
+	return a.Bucket.IsObjectExist(a.pathToKey(path))
 }
 
 func (a *Alioss) putSymlink(srcPath, linkPath string) error {
@@ -75,10 +55,5 @@ func (a *Alioss) putSymlink(srcPath, linkPath string) error {
 		return errors.NewError(errors.WithMsg("srcPath or linkPath is required to put symlink"), errors.WithCode(exitcode.MissingArguments))
 	}
 
-	bucket, bucketErr := a.client.Bucket(a.options.Bucket)
-	if bucketErr != nil {
-		return bucketErr
-	}
-
-	return bucket.PutSymlink(a.pathToKey(linkPath), a.pathToKey(srcPath))
+	return a.Bucket.PutSymlink(a.pathToKey(linkPath), a.pathToKey(srcPath))
 }

@@ -9,5 +9,5 @@ const (
 )
 
 func (a *Alioss) pathToKey(path string) string {
-	return filepath.Join(a.options.Base, path)
+	return filepath.Join(a.Options.Base, path)
 }
