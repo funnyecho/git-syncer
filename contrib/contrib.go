@@ -25,7 +25,7 @@ type Contrib interface {
 // Factory factory function to new contrib instance
 type Factory func(options interface {
 	repository.ConfigReader
-}) Contrib
+}) (Contrib, error)
 
 var factory Factory
 

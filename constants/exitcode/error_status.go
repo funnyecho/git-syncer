@@ -51,4 +51,10 @@ const (
 
 	// ContribSyncFailed failed to sync
 	ContribSyncFailed
+
+	// ContribLocked contrib was locked
+	ContribLocked
+
+	// ContribUnlock contrib is unlock
+	ContribUnlock
 )

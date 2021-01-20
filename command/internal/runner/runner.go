@@ -52,7 +52,11 @@ func Run(name string, args []string, withTaps ...WithTap) int {
 		}()
 	}
 
-	ct := contrib.UseFactory()(repo)
+	ct, ctErr := contrib.UseFactory()(repo)
+	if ctErr != nil {
+		log.Errore(fmt.Sprintf("failed to init contrib"), ctErr)
+		return exitcode.ContribUnknown
+	}
 
 	if taps.TapCommand != nil {
 		cmdErr := taps.TapCommand(repo, ct)
