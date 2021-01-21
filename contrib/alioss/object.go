@@ -9,13 +9,13 @@ import (
 
 // getObject get object in bucket
 func (a *Alioss) getObject(path string) (io.ReadCloser, error) {
-	return a.Bucket.GetObject(a.pathToKey(path), nil)
+	return a.bucket.GetObject(a.pathToKey(path), nil)
 }
 
 // uploadObject upload object
 func (a *Alioss) uploadObject(path string, stream io.Reader) (string, error) {
 	key := a.pathToKey(path)
-	uploadErr := a.Bucket.PutObject(
+	uploadErr := a.bucket.PutObject(
 		key,
 		stream,
 	)
@@ -23,7 +23,7 @@ func (a *Alioss) uploadObject(path string, stream io.Reader) (string, error) {
 	if uploadErr != nil {
 		return "", errors.NewError(
 			errors.WithErr(uploadErr),
-			errors.WithMsgf("failed to upload file %s to bucket %s", path, a.Options.Bucket),
+			errors.WithMsgf("failed to upload file %s to bucket %s", path, a.opts.Bucket()),
 		)
 	}
 
@@ -34,7 +34,7 @@ func (a *Alioss) uploadObject(path string, stream io.Reader) (string, error) {
 func (a *Alioss) deleteObject(path string) (string, error) {
 	key := a.pathToKey(path)
 
-	deleteErr := a.Bucket.DeleteObject(key)
+	deleteErr := a.bucket.DeleteObject(key)
 	if deleteErr != nil {
 		return "", deleteErr
 	}
@@ -47,7 +47,7 @@ func (a *Alioss) isObjectExisted(path string) (bool, error) {
 		return false, errors.NewError(errors.WithMsg("path is required to check whether object exited"), errors.WithCode(exitcode.MissingArguments))
 	}
 
-	return a.Bucket.IsObjectExist(a.pathToKey(path))
+	return a.bucket.IsObjectExist(a.pathToKey(path))
 }
 
 func (a *Alioss) putSymlink(srcPath, linkPath string) error {
@@ -55,5 +55,5 @@ func (a *Alioss) putSymlink(srcPath, linkPath string) error {
 		return errors.NewError(errors.WithMsg("srcPath or linkPath is required to put symlink"), errors.WithCode(exitcode.MissingArguments))
 	}
 
-	return a.Bucket.PutSymlink(a.pathToKey(linkPath), a.pathToKey(srcPath))
+	return a.bucket.PutSymlink(a.pathToKey(linkPath), a.pathToKey(srcPath))
 }

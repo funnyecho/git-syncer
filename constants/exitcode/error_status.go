@@ -40,11 +40,8 @@ const (
 )
 
 const (
-	// ContribUnknown unknown error
-	ContribUnknown = 300 + iota
-
-	// ContribForbidden forbidden
-	ContribForbidden
+	// ContribForbidden unknown error
+	ContribForbidden = 300 + iota
 
 	// ContribHeadNotFound head not found
 	ContribHeadNotFound
@@ -57,4 +54,10 @@ const (
 
 	// ContribUnlock contrib is unlock
 	ContribUnlock
+
+	// ContribInvalidLog invalid log format
+	ContribInvalidLog
+
+	// ContribInvalidLock invalid lock format
+	ContribInvalidLock
 )

@@ -55,7 +55,7 @@ func Run(name string, args []string, withTaps ...WithTap) int {
 	ct, ctErr := contrib.UseFactory()(repo)
 	if ctErr != nil {
 		log.Errore(fmt.Sprintf("failed to init contrib"), ctErr)
-		return exitcode.ContribUnknown
+		return exitcode.ContribForbidden
 	}
 
 	if taps.TapCommand != nil {

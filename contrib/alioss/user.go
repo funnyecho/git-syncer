@@ -6,8 +6,8 @@ import (
 )
 
 func (a *Alioss) getExecutor() string {
-	user, _ := a.GetRawConfig("user.name")
-	email, _ := a.GetRawConfig("user.email")
+	user := a.opts.UserName()
+	email := a.opts.UserEmail()
 
 	if email != "" {
 		email = fmt.Sprintf("<%s>", email)

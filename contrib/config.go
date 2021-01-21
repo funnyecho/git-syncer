@@ -6,30 +6,20 @@ import (
 	"github.com/funnyecho/git-syncer/repository"
 )
 
-// Configurable prefix wrapper for config
-type Configurable struct {
-	prefix string
-	reader repository.ConfigReader
-}
+// PrefixConfig config prefix
+type PrefixConfig string
 
-// NewConfigurable create configurable instance
-func NewConfigurable(prefix string, reader repository.ConfigReader) *Configurable {
-	return &Configurable{
-		prefix,
-		reader,
-	}
-}
-
-// GetConfig get config with contrib prefix from repo
-func (c *Configurable) GetConfig(key string) (string, error) {
-	if c.prefix != "" {
-		key = fmt.Sprintf("%s.%s", c.prefix, key)
+// MustConfig get config with prefix
+func (p PrefixConfig) MustConfig(r repository.ConfigReader, key string) (string, error) {
+	if p != "" {
+		key = fmt.Sprintf("%s.%s", p, key)
 	}
 
-	return c.reader.GetConfig(key)
+	return r.GetConfig(key)
 }
 
-// GetRawConfig get config without prefix from repo
-func (c *Configurable) GetRawConfig(key string) (string, error) {
-	return c.reader.GetConfig(key)
+// MayConfig get config with prefix, if error occur, return ""
+func (p PrefixConfig) MayConfig(r repository.ConfigReader, key string) string {
+	v, _ := p.MustConfig(r, key)
+	return v
 }

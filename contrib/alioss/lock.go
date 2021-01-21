@@ -44,11 +44,10 @@ const (
 )
 
 func (a *Alioss) lock(info LockInfo) (string, error) {
-	if locked, lockCheckErr := a.isObjectExisted(objectLockFile); lockCheckErr != nil {
+	if locked, lockCheckErr := a.isObjectExisted(ObjectLockFile); lockCheckErr != nil {
 		return "", errors.NewError(
 			errors.WithErr(lockCheckErr),
 			errors.WithMsg("failed to check whether contrib was locked"),
-			errors.WithCode(exitcode.ContribUnknown),
 		)
 	} else if locked {
 		return "", errors.NewError(
@@ -66,11 +65,11 @@ func (a *Alioss) lock(info LockInfo) (string, error) {
 		return "", errors.NewError(
 			errors.WithErr(jsonErr),
 			errors.WithMsgf("failed to json marshal lock info: %v", info),
-			errors.WithCode(exitcode.Unknown),
+			errors.WithCode(exitcode.ContribInvalidLock),
 		)
 	}
 
-	_, uploadErr := a.uploadObject(objectLockFile, bytes.NewBuffer(jsonInfo))
+	_, uploadErr := a.uploadObject(ObjectLockFile, bytes.NewBuffer(jsonInfo))
 	if uploadErr != nil {
 		return "", errors.NewError(
 			errors.WithErr(uploadErr),
@@ -83,11 +82,11 @@ func (a *Alioss) lock(info LockInfo) (string, error) {
 }
 
 func (a *Alioss) unlock(id string) error {
-	if locked, lockCheckErr := a.isObjectExisted(objectLockFile); lockCheckErr != nil {
+	if locked, lockCheckErr := a.isObjectExisted(ObjectLockFile); lockCheckErr != nil {
 		return errors.NewError(
 			errors.WithErr(lockCheckErr),
 			errors.WithMsg("failed to check whether contrib was locked"),
-			errors.WithCode(exitcode.ContribUnknown),
+			errors.WithCode(exitcode.ContribForbidden),
 		)
 	} else if !locked {
 		return errors.NewError(
@@ -96,7 +95,7 @@ func (a *Alioss) unlock(id string) error {
 		)
 	}
 
-	lockFileReader, lockFileReaderErr := a.getObject(objectLockFile)
+	lockFileReader, lockFileReaderErr := a.getObject(ObjectLockFile)
 	if lockFileReaderErr != nil {
 		return errors.NewError(
 			errors.WithErr(lockFileReaderErr),
@@ -111,7 +110,7 @@ func (a *Alioss) unlock(id string) error {
 		return errors.NewError(
 			errors.WithErr(lockFileReaderErr),
 			errors.WithMsg("failed to read contrib lock file"),
-			errors.WithCode(exitcode.ContribUnknown),
+			errors.WithCode(exitcode.ContribForbidden),
 		)
 	}
 
@@ -132,12 +131,12 @@ func (a *Alioss) unlock(id string) error {
 		)
 	}
 
-	_, unLockErr := a.deleteObject(objectLockFile)
+	_, unLockErr := a.deleteObject(ObjectLockFile)
 	if unLockErr != nil {
 		return errors.NewError(
 			errors.WithErr(jsonErr),
 			errors.WithMsgf("failed to delete contrib lock file"),
-			errors.WithCode(exitcode.ContribUnknown),
+			errors.WithCode(exitcode.ContribForbidden),
 		)
 	}
 
@@ -147,7 +146,7 @@ func (a *Alioss) unlock(id string) error {
 func (a *Alioss) getLockInfo(lt lockType) LockInfo {
 	return LockInfo{
 		Mutex:  lt,
-		Date:   JSONTime(time.Now()),
+		Date:   JSONTime{time.Now()},
 		Locker: a.getExecutor(),
 		LockID: uuid.New().String(),
 		// WLockSHA1: wLockSHA1,

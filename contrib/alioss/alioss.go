@@ -15,39 +15,37 @@ import (
 
 // NewContribFactory create alioss contrib factory
 func NewContribFactory() contrib.Factory {
-	return func(options interface{ repository.ConfigReader }) (contrib.Contrib, error) {
-		configurable := contrib.NewConfigurable("alioss", options)
-
-		ossOptions, ossOptionsErr := NewOptions(configurable)
-		if ossOptionsErr != nil {
-			return nil, ossOptionsErr
-		}
+	return func(params interface{ repository.ConfigReader }) (contrib.Contrib, error) {
+		ossOptions := NewOptions(params)
 
 		bucket, bucketErr := bucket.New(&bucket.Options{
-			Endpoint:        ossOptions.Endpoint,
-			Bucket:          ossOptions.Bucket,
-			AccessKeyID:     ossOptions.AccessKeyID,
-			AccessKeySecret: ossOptions.AccessKeySecret,
+			Endpoint:        ossOptions.Endpoint(),
+			Bucket:          ossOptions.Bucket(),
+			AccessKeyID:     ossOptions.AccessKeyID(),
+			AccessKeySecret: ossOptions.AccessKeySecret(),
 		})
 		if bucketErr != nil {
 			return nil, bucketErr
 		}
 
-		c := &Alioss{
-			configurable,
-			ossOptions,
-			bucket,
-		}
-
-		return c, nil
+		return NewContrib(ossOptions, bucket)
 	}
+}
+
+// NewContrib create alioss contrib
+func NewContrib(opt *Options, bkt bucket.Bucket) (contrib.Contrib, error) {
+	c := &Alioss{
+		opt,
+		bkt,
+	}
+
+	return c, nil
 }
 
 // Alioss alioss contrib
 type Alioss struct {
-	*contrib.Configurable
-	*Options
-	bucket.Bucket
+	opts   *Options
+	bucket bucket.Bucket
 }
 
 // GetHeadSHA1 get head sha1 from alioss contrib
@@ -161,7 +159,7 @@ func (a *Alioss) Sync(reqx *contrib.SyncReq) (res contrib.SyncRes, err error) {
 		SHA1:     reqx.SHA1,
 		RefSHA1:  head.SHA1,
 		Executor: a.getExecutor(),
-		Date:     JSONTime(time.Now()),
+		Date:     JSONTime{time.Now()},
 		Uploaded: uploaded,
 		Deleted:  deleted,
 	}

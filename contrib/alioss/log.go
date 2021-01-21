@@ -56,7 +56,7 @@ func (a *Alioss) pushLog(info LogInfo) error {
 		)
 	}
 
-	logPath := filepath.Join(objectLogDir, info.SHA1)
+	logPath := filepath.Join(ObjectLogDir, info.SHA1)
 	_, uploadErr := a.uploadObject(logPath, bytes.NewReader(jsonLog))
 	if uploadErr != nil {
 		return errors.NewError(
@@ -66,12 +66,12 @@ func (a *Alioss) pushLog(info LogInfo) error {
 		)
 	}
 
-	headLogErr := a.putSymlink(logPath, objectHeadLinkFile)
+	headLogErr := a.putSymlink(logPath, ObjectHeadLinkFile)
 	if headLogErr != nil {
 		return errors.NewError(
-			errors.WithCode(exitcode.ContribUnknown),
+			errors.WithCode(exitcode.ContribForbidden),
 			errors.WithErr(headLogErr),
-			errors.WithMsgf("failed to link head log file from %s to %s", logPath, objectHeadLinkFile),
+			errors.WithMsgf("failed to link head log file from %s to %s", logPath, ObjectHeadLinkFile),
 		)
 	}
 
@@ -80,12 +80,11 @@ func (a *Alioss) pushLog(info LogInfo) error {
 
 // PeekLog get head log
 func (a *Alioss) peekLog() (*LogInfo, error) {
-	headLogReader, headLogReaderErr := a.getObject(objectHeadLinkFile)
+	headLogReader, headLogReaderErr := a.getObject(ObjectHeadLinkFile)
 	if headLogReaderErr != nil {
 		return nil, errors.NewError(
 			errors.WithErr(headLogReaderErr),
 			errors.WithMsg("failed to download head log file"),
-			errors.WithCode(exitcode.ContribForbidden),
 		)
 	}
 
@@ -95,7 +94,7 @@ func (a *Alioss) peekLog() (*LogInfo, error) {
 		return nil, errors.NewError(
 			errors.WithErr(infoReadErr),
 			errors.WithMsg("failed to read contrib head log file"),
-			errors.WithCode(exitcode.ContribUnknown),
+			errors.WithCode(exitcode.ContribForbidden),
 		)
 	}
 
@@ -105,7 +104,7 @@ func (a *Alioss) peekLog() (*LogInfo, error) {
 		return nil, errors.NewError(
 			errors.WithErr(jsonErr),
 			errors.WithMsgf("failed to unmarshal contrib head log file: %s", infoBuf.String()),
-			errors.WithCode(exitcode.Unknown),
+			errors.WithCode(exitcode.ContribInvalidLog),
 		)
 	}
 

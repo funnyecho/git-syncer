@@ -24,11 +24,11 @@ func TestSetup(t *testing.T) {
 			name: "failed to get deployed head sha1",
 			contribHeadSha1: func() (string, error) {
 				return "", errors.NewError(
-					errors.WithCode(exitcode.ContribUnknown),
+					errors.WithCode(exitcode.ContribForbidden),
 				)
 			},
 			err: errors.NewError(
-				errors.WithCode(exitcode.ContribUnknown),
+				errors.WithCode(exitcode.ContribForbidden),
 			),
 		},
 		{

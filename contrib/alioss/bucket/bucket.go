@@ -17,18 +17,14 @@ type Bucket interface {
 	PutSymlink(symObjectKey string, targetObjectKey string, options ...oss.Option) error
 }
 
-// Options options to create oss client and access bucket
-type Options struct {
-	Endpoint        string
-	Bucket          string
-	AccessKeyID     string
-	AccessKeySecret string
-}
-
 // New create bucket
 func New(opt *Options) (Bucket, error) {
 	if opt == nil {
 		return nil, errors.NewError(errors.WithMsg("bucket options requried"), errors.WithCode(exitcode.MissingArguments))
+	}
+
+	if optInvalid := opt.Valid(); optInvalid != nil {
+		return nil, optInvalid
 	}
 
 	client, clientErr := oss.New(opt.Endpoint, opt.AccessKeyID, opt.AccessKeySecret)

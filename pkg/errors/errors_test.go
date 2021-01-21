@@ -128,7 +128,7 @@ func TestGetErrorCode(t *testing.T) {
 					errors.WithCode(exitcode.Nil),
 					errors.WithErr(
 						errors.NewError(
-							errors.WithCode(exitcode.ContribUnknown),
+							errors.WithCode(exitcode.ContribForbidden),
 							errors.WithErr(
 								errors.NewError(
 									errors.WithCode(exitcode.RepoUnknown),
@@ -152,7 +152,7 @@ func TestGetErrorCode(t *testing.T) {
 				)),
 			},
 			[]int{
-				exitcode.ContribUnknown,
+				exitcode.ContribForbidden,
 				exitcode.RepoListFilesFailed,
 			},
 		},

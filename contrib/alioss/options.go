@@ -1,48 +1,64 @@
 package alioss
 
-import "github.com/funnyecho/git-syncer/contrib"
+import (
+	"github.com/funnyecho/git-syncer/contrib"
+	"github.com/funnyecho/git-syncer/repository"
+)
 
-// Options options to setup alioss contrib
-type Options struct {
-	Endpoint        string
-	Bucket          string
-	AccessKeyID     string
-	AccessKeySecret string
-	Base            string
+const (
+	ossPrefixConfig  = contrib.PrefixConfig("alioss")
+	noopPrefixConfig = contrib.PrefixConfig("")
+)
+
+// NewOptions new Options
+func NewOptions(r repository.ConfigReader) *Options {
+	return &Options{r}
 }
 
-// NewOptions init options from config
-func NewOptions(c *contrib.Configurable) (*Options, error) {
-	endpoint, endpointErr := c.GetConfig("endpoint")
-	if endpointErr != nil {
-		return nil, endpointErr
-	}
+// Options alioss Options
+type Options struct {
+	repository.ConfigReader
+}
 
-	bucket, bucketErr := c.GetConfig("bucket")
-	if bucketErr != nil {
-		return nil, bucketErr
-	}
+// Endpoint endpoint options
+func (o *Options) Endpoint() string {
+	return o.ossMayConfig("endpoint")
+}
 
-	akID, akIDErr := c.GetConfig("access_key_id")
-	if akIDErr != nil {
-		return nil, akIDErr
-	}
+// AccessKeyID access key id options
+func (o *Options) AccessKeyID() string {
+	return o.ossMayConfig("access_key_id")
+}
 
-	akSecret, akSecretErr := c.GetConfig("access_key_secret")
-	if akSecretErr != nil {
-		return nil, akSecretErr
-	}
+// AccessKeySecret access key secret options
+func (o *Options) AccessKeySecret() string {
+	return o.ossMayConfig("access_key_secret")
+}
 
-	base, baseErr := c.GetConfig("base")
-	if baseErr != nil {
-		return nil, baseErr
-	}
+// Bucket bucket options
+func (o *Options) Bucket() string {
+	return o.ossMayConfig("bucket")
+}
 
-	return &Options{
-		endpoint,
-		bucket,
-		akID,
-		akSecret,
-		base,
-	}, nil
+// Base base options
+func (o *Options) Base() string {
+	return o.ossMayConfig("base")
+}
+
+// UserName user.name
+func (o *Options) UserName() string {
+	return o.noopMayConfig("user.name")
+}
+
+// UserEmail user.email
+func (o *Options) UserEmail() string {
+	return o.noopMayConfig("user.email")
+}
+
+func (o *Options) ossMayConfig(key string) string {
+	return ossPrefixConfig.MayConfig(o.ConfigReader, key)
+}
+
+func (o *Options) noopMayConfig(key string) string {
+	return noopPrefixConfig.MayConfig(o.ConfigReader, key)
 }
