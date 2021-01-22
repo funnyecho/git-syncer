@@ -30,3 +30,5 @@ tmp/
 storage/
 ./config/
 
+
+.git-syncer-config

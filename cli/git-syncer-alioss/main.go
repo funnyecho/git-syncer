@@ -8,5 +8,5 @@ import (
 
 func main() {
 	contrib.WithFactory(alioss.NewContribFactory())
-	command.Run()
+	command.Exec()
 }

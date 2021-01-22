@@ -2,9 +2,10 @@ package command
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/mitchellh/cli"
-	"os"
 )
 
 var (
@@ -13,7 +14,8 @@ var (
 	BuildPlatform string
 )
 
-func Run() {
+// Exec exec command
+func Exec() {
 	c := cli.NewCLI("git-syncer", Version)
 	c.Args = os.Args[1:]
 

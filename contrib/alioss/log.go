@@ -82,6 +82,10 @@ func (a *Alioss) pushLog(info LogInfo) error {
 func (a *Alioss) peekLog() (*LogInfo, error) {
 	headLogReader, headLogReaderErr := a.getObject(ObjectHeadLinkFile)
 	if headLogReaderErr != nil {
+		if IsObjectNotFoundErr(headLogReaderErr) {
+			return &LogInfo{}, nil
+		}
+
 		return nil, errors.NewError(
 			errors.WithErr(headLogReaderErr),
 			errors.WithMsg("failed to download head log file"),

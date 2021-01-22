@@ -1,7 +1,7 @@
 package gitter
 
 import (
-	"fmt"
+	"strings"
 )
 
 // ConfigGetOptions config getter options
@@ -24,10 +24,10 @@ func (g *git) ConfigGet(key string, options ConfigGetOptions) (string, error) {
 	args := []string{"config"}
 
 	if options.File != "" {
-		args = append(args, fmt.Sprintf("-f %s", options.File))
+		args = append(args, "-f", options.File)
 	}
 
-	args = append(args, fmt.Sprintf("--get %s", key))
+	args = append(args, key)
 
 	cmd := g.command("git", args...)
 
@@ -36,17 +36,17 @@ func (g *git) ConfigGet(key string, options ConfigGetOptions) (string, error) {
 		return "", err
 	}
 
-	return string(v), nil
+	return strings.TrimSpace(string(v)), nil
 }
 
 func (g *git) ConfigSet(key, value string, options ConfigSetOptions) error {
 	args := []string{"config"}
 
 	if options.File != "" {
-		args = append(args, fmt.Sprintf("-f %s", options.File))
+		args = append(args, "-f", options.File)
 	}
 
-	args = append(args, fmt.Sprintf("%s %s", key, value))
+	args = append(args, key, value)
 
 	cmd := g.command("git", args...)
 

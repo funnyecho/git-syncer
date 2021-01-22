@@ -1,10 +1,10 @@
-package catchup_test
+package command_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/funnyecho/git-syncer/command/catchup"
+	"github.com/funnyecho/git-syncer/command"
 	"github.com/funnyecho/git-syncer/contrib"
 	"github.com/funnyecho/git-syncer/contrib/contribtest"
 	"github.com/stretchr/testify/assert"
@@ -72,7 +72,7 @@ func TestCatchup(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			err := catchup.Catchup(
+			err := command.ExecCatchup(
 				&contribtest.MockContrib{
 					HeadSHA1:    nil,
 					SyncHandler: tc.contribSyncer,

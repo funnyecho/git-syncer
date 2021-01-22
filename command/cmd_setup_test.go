@@ -1,10 +1,10 @@
-package setup_test
+package command_test
 
 import (
 	stdErr "errors"
 	"testing"
 
-	"github.com/funnyecho/git-syncer/command/setup"
+	"github.com/funnyecho/git-syncer/command"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/contrib"
 	"github.com/funnyecho/git-syncer/contrib/contribtest"
@@ -74,7 +74,7 @@ func TestSetup(t *testing.T) {
 		}
 
 		t.Run(tc.name, func(t *testing.T) {
-			e := setup.Setup(cb, rp)
+			e := command.ExecSetup(cb, rp)
 			if tc.err == nil {
 				assert.Nil(t, e)
 			} else {
@@ -103,7 +103,7 @@ func TestSetup(t *testing.T) {
 			},
 		}
 
-		e := setup.Setup(cb, rp)
+		e := command.ExecSetup(cb, rp)
 		assert.Nil(t, e)
 	})
 }

@@ -38,6 +38,13 @@ func bindFlags(f interface{}, fs *flag.FlagSet) error {
 
 		fieldAddr := v.Field(i).UnsafeAddr()
 
+		if name == "@nest@" {
+			if nestErr := bindFlags(unsafe.Pointer(fieldAddr), fs); nestErr != nil {
+				return nestErr
+			}
+			continue
+		}
+
 		switch field.Type.Kind() {
 		case reflect.Bool:
 			value, _ := strconv.ParseBool(dValue)

@@ -27,12 +27,12 @@ func (o *Options) Endpoint() string {
 
 // AccessKeyID access key id options
 func (o *Options) AccessKeyID() string {
-	return o.ossMayConfig("access_key_id")
+	return o.ossMayConfig("accessKeyID")
 }
 
 // AccessKeySecret access key secret options
 func (o *Options) AccessKeySecret() string {
-	return o.ossMayConfig("access_key_secret")
+	return o.ossMayConfig("accessKeySecret")
 }
 
 // Bucket bucket options

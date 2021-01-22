@@ -15,7 +15,7 @@ const (
 
 const (
 	// ConfigSyncRoot sync_root key in config file
-	ConfigSyncRoot = "sync_root"
+	ConfigSyncRoot = "syncRoot"
 )
 
 func (r *repo) GetConfig(key string) (string, error) {
@@ -53,6 +53,11 @@ func (r *repo) getConfig(key string) (val string, err error) {
 			File: ProjectConfigName,
 		},
 	)
+	if val != "" {
+		return
+	}
+
+	val, err = r.gitter.ConfigGet(key, gitter.ConfigGetOptions{})
 	if val != "" {
 		return
 	}

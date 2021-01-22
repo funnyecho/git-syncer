@@ -1,9 +1,9 @@
-package config_test
+package command_test
 
 import (
 	"testing"
 
-	"github.com/funnyecho/git-syncer/command/config"
+	"github.com/funnyecho/git-syncer/command"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -63,7 +63,7 @@ func TestGetConfig(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			v, err := config.GetConfig(tc.key, &mockConfigReader{
+			v, err := command.ExecGetConfig(tc.key, &mockConfigReader{
 				tc.getConfig,
 			})
 
@@ -115,7 +115,7 @@ func TestUpdateConfig(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			err := config.UpdateConfig(tc.key, tc.value, &mockConfigWriter{
+			err := command.ExecUpdateConfig(tc.key, tc.value, &mockConfigWriter{
 				func(key, value string) error {
 					assert.Equal(t, tc.key, key)
 					return tc.updateErr

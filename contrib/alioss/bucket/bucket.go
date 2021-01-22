@@ -2,6 +2,7 @@ package bucket
 
 import (
 	"io"
+	"strings"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
@@ -27,12 +28,12 @@ func New(opt *Options) (Bucket, error) {
 		return nil, optInvalid
 	}
 
-	client, clientErr := oss.New(opt.Endpoint, opt.AccessKeyID, opt.AccessKeySecret)
+	client, clientErr := oss.New(strings.TrimSpace(opt.Endpoint), opt.AccessKeyID, opt.AccessKeySecret)
 	if clientErr != nil {
 		return nil, clientErr
 	}
 
-	bkt, bucketErr := client.Bucket(opt.Bucket)
+	bkt, bucketErr := client.Bucket(strings.TrimSpace(opt.Bucket))
 	if bucketErr != nil {
 		return nil, bucketErr
 	}

@@ -41,6 +41,10 @@ type repo struct {
 // WithWorkingDir change working dir
 func WithWorkingDir(dir string) WithOptions {
 	return func(o *Option) error {
+		if dir == "" {
+			return nil
+		}
+
 		if err := os.Chdir(dir); err != nil {
 			return errors.NewError(
 				errors.WithCode(exitcode.Usage),

@@ -1,6 +1,7 @@
 package alioss
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -56,9 +57,15 @@ func (a *Alioss) GetHeadSHA1() (string, error) {
 	}
 
 	defer func() {
+		err := recover()
+
 		unLockErr := a.unlock(rLockID)
 		if unLockErr != nil {
 			log.Errore("failed to unlock reader", unLockErr, "lockID", rLockID)
+		}
+
+		if err != nil {
+			panic(err)
 		}
 	}()
 
@@ -132,7 +139,7 @@ func (a *Alioss) Sync(reqx *contrib.SyncReq) (res contrib.SyncRes, err error) {
 
 		fSHA1, fSHA1Err := fs.GetFileSHA1(p)
 		if fSHA1Err == nil {
-			udF.SHA1 = string(fSHA1)
+			udF.SHA1 = fmt.Sprintf("%x", fSHA1)
 		}
 
 		uploaded = append(uploaded, udF)
