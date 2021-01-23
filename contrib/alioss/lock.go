@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/google/uuid"
@@ -69,7 +70,7 @@ func (a *Alioss) lock(info LockInfo) (string, error) {
 		)
 	}
 
-	_, uploadErr := a.uploadObject(ObjectLockFile, bytes.NewBuffer(jsonInfo))
+	_, uploadErr := a.uploadObject(ObjectLockFile, bytes.NewBuffer(jsonInfo), oss.ACL(oss.ACLPrivate))
 	if uploadErr != nil {
 		return "", errors.NewError(
 			errors.WithErr(uploadErr),

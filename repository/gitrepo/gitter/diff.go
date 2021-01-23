@@ -2,6 +2,7 @@ package gitter
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 )
 
@@ -34,34 +35,21 @@ func (g *git) diff(path string, commit string, options diffOptions) ([]string, e
 		path = "."
 	}
 
-	args = append(args, commit, fmt.Sprintf("-- \"%s\"", path))
+	args = append(args, commit, "--", path)
 
 	var files []string
 
 	cmd := g.command("git", args...)
-	stdout, err := cmd.StdoutPipe()
+
+	v, err := cmd.Output()
 	if err != nil {
 		return nil, err
 	}
 
-	if err := cmd.Start(); err != nil {
-		return nil, err
+	scanner := bufio.NewScanner(bytes.NewBuffer(v))
+	for scanner.Scan() {
+		files = append(files, scanner.Text())
 	}
-
-	defer func() {
-		if err != nil {
-			files = nil
-		}
-	}()
-
-	go func() {
-		scanner := bufio.NewScanner(stdout)
-		for scanner.Scan() {
-			files = append(files, scanner.Text())
-		}
-	}()
-
-	err = cmd.Wait()
 
 	return files, err
 }

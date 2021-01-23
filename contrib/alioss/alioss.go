@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/contrib"
 	"github.com/funnyecho/git-syncer/contrib/alioss/bucket"
@@ -122,7 +123,7 @@ func (a *Alioss) Sync(reqx *contrib.SyncReq) (res contrib.SyncRes, err error) {
 		}
 		defer f.Close()
 
-		_, uErr := a.uploadObject(p, f)
+		_, uErr := a.uploadObject(p, f, oss.ACL(oss.ACLPublicRead))
 		if uErr != nil {
 			err = uErr
 			return

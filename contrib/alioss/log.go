@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"path/filepath"
 
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 )
@@ -57,7 +58,7 @@ func (a *Alioss) pushLog(info LogInfo) error {
 	}
 
 	logPath := filepath.Join(ObjectLogDir, info.SHA1)
-	_, uploadErr := a.uploadObject(logPath, bytes.NewReader(jsonLog))
+	_, uploadErr := a.uploadObject(logPath, bytes.NewReader(jsonLog), oss.ACL(oss.ACLPrivate))
 	if uploadErr != nil {
 		return errors.NewError(
 			errors.WithCode(exitcode.ContribSyncFailed),
@@ -66,7 +67,7 @@ func (a *Alioss) pushLog(info LogInfo) error {
 		)
 	}
 
-	headLogErr := a.putSymlink(logPath, ObjectHeadLinkFile)
+	headLogErr := a.putSymlink(logPath, ObjectHeadLinkFile, oss.ACL(oss.ACLPrivate))
 	if headLogErr != nil {
 		return errors.NewError(
 			errors.WithCode(exitcode.ContribForbidden),

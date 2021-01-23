@@ -3,6 +3,7 @@ package alioss
 import (
 	"io"
 
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 )
@@ -13,11 +14,12 @@ func (a *Alioss) getObject(path string) (io.ReadCloser, error) {
 }
 
 // uploadObject upload object
-func (a *Alioss) uploadObject(path string, stream io.Reader) (string, error) {
+func (a *Alioss) uploadObject(path string, stream io.Reader, options ...oss.Option) (string, error) {
 	key := a.pathToKey(path)
 	uploadErr := a.bucket.PutObject(
 		key,
 		stream,
+		options...,
 	)
 
 	if uploadErr != nil {
@@ -50,10 +52,10 @@ func (a *Alioss) isObjectExisted(path string) (bool, error) {
 	return a.bucket.IsObjectExist(a.pathToKey(path))
 }
 
-func (a *Alioss) putSymlink(srcPath, linkPath string) error {
+func (a *Alioss) putSymlink(srcPath, linkPath string, options ...oss.Option) error {
 	if srcPath == "" || linkPath == "" {
 		return errors.NewError(errors.WithMsg("srcPath or linkPath is required to put symlink"), errors.WithCode(exitcode.MissingArguments))
 	}
 
-	return a.bucket.PutSymlink(a.pathToKey(linkPath), a.pathToKey(srcPath))
+	return a.bucket.PutSymlink(a.pathToKey(linkPath), a.pathToKey(srcPath), options...)
 }
