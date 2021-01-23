@@ -123,7 +123,7 @@ func (a *Alioss) Sync(reqx *contrib.SyncReq) (res contrib.SyncRes, err error) {
 		}
 		defer f.Close()
 
-		_, uErr := a.uploadObject(p, f, oss.ACL(oss.ACLPublicRead))
+		_, uErr := a.uploadObject(p, f, oss.ObjectACL(oss.ACLPublicRead))
 		if uErr != nil {
 			err = uErr
 			return
