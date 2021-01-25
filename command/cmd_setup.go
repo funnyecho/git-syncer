@@ -42,6 +42,23 @@ func (c *setupCmd) Run(args []string) (ext int) {
 		return repoCode
 	}
 
+	if opt.Branch != "" {
+		prevHead, pushHeadErr := repo.PushHead(opt.Branch)
+		if pushHeadErr != nil {
+			log.Errore("failed to checkout to branch", pushHeadErr, "branch", opt.Branch)
+			return exitcode.RepoCheckoutFailed
+		}
+		defer func() {
+			popHeadErr := repo.PopHead(prevHead)
+			if popHeadErr != nil {
+				log.Errore("failed to reset to head", popHeadErr, "head", prevHead)
+				if ext != exitcode.Nil {
+					ext = exitcode.RepoCheckoutFailed
+				}
+			}
+		}()
+	}
+
 	ct, ctCode := NewContrib(repo)
 	if ctCode != exitcode.Nil {
 		return ctCode

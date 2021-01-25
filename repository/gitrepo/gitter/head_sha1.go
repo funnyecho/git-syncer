@@ -1,5 +1,7 @@
 package gitter
 
+import "strings"
+
 func (g *git) GetHeadSHA1() (string, error) {
 	cmd := g.command("git", "log", "-n 1", "--pretty=format:%H")
 
@@ -8,5 +10,5 @@ func (g *git) GetHeadSHA1() (string, error) {
 		return "", err
 	}
 
-	return string(v), nil
+	return strings.TrimSpace(string(v)), nil
 }

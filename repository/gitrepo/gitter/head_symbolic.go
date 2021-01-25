@@ -12,5 +12,5 @@ func (g *git) GetSymbolicHead() (string, error) {
 		return "", err
 	}
 
-	return strings.TrimPrefix(string(v), "refs/heads/"), nil
+	return strings.TrimPrefix(strings.TrimSpace(string(v)), "refs/heads/"), nil
 }

@@ -34,7 +34,7 @@ func (c *pushCmd) Synopsis() string {
 	return "Push changed files to remote contrib"
 }
 
-func (c *pushCmd) Run(args []string) int {
+func (c *pushCmd) Run(args []string) (ext int) {
 	var opt BasicOptions
 	fs := flag.NewFlagSet("push", flag.ContinueOnError)
 
@@ -45,6 +45,23 @@ func (c *pushCmd) Run(args []string) int {
 	repo, repoCode := NewRepo(opt.Base, opt.Remote)
 	if repoCode != exitcode.Nil {
 		return repoCode
+	}
+
+	if opt.Branch != "" {
+		prevHead, pushHeadErr := repo.PushHead(opt.Branch)
+		if pushHeadErr != nil {
+			log.Errore("failed to checkout to branch", pushHeadErr, "branch", opt.Branch)
+			return exitcode.RepoCheckoutFailed
+		}
+		defer func() {
+			popHeadErr := repo.PopHead(prevHead)
+			if popHeadErr != nil {
+				log.Errore("failed to reset to head", popHeadErr, "head", prevHead)
+				if ext != exitcode.Nil {
+					ext = exitcode.RepoCheckoutFailed
+				}
+			}
+		}()
 	}
 
 	ct, ctCode := NewContrib(repo)

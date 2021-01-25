@@ -30,7 +30,7 @@ func (c *catchupCmd) Synopsis() string {
 	return "Creates or updates the `.git-ftp.log` file on the remote contrib."
 }
 
-func (c *catchupCmd) Run(args []string) int {
+func (c *catchupCmd) Run(args []string) (ext int) {
 	var opt BasicOptions
 	fs := flag.NewFlagSet("catchup", flag.ContinueOnError)
 
@@ -41,6 +41,23 @@ func (c *catchupCmd) Run(args []string) int {
 	repo, repoCode := NewRepo(opt.Base, opt.Remote)
 	if repoCode != exitcode.Nil {
 		return repoCode
+	}
+
+	if opt.Branch != "" {
+		prevHead, pushHeadErr := repo.PushHead(opt.Branch)
+		if pushHeadErr != nil {
+			log.Errore("failed to checkout to branch", pushHeadErr, "branch", opt.Branch)
+			return exitcode.RepoCheckoutFailed
+		}
+		defer func() {
+			popHeadErr := repo.PopHead(prevHead)
+			if popHeadErr != nil {
+				log.Errore("failed to reset to head", popHeadErr, "head", prevHead)
+				if ext != exitcode.Nil {
+					ext = exitcode.RepoCheckoutFailed
+				}
+			}
+		}()
 	}
 
 	ct, ctCode := NewContrib(repo)

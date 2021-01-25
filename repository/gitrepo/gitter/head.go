@@ -1,5 +1,7 @@
 package gitter
 
+import "strings"
+
 func (g *git) GetHead() (string, error) {
 	cmd := g.command("git", "rev-parse", "HEAD")
 
@@ -8,5 +10,5 @@ func (g *git) GetHead() (string, error) {
 		return "", err
 	}
 
-	return string(v), nil
+	return strings.TrimSpace(string(v)), nil
 }

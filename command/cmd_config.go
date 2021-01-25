@@ -27,7 +27,7 @@ func (c *configCmd) Synopsis() string {
 	return "Config getter and setter"
 }
 
-func (c *configCmd) Run(args []string) int {
+func (c *configCmd) Run(args []string) (ext int) {
 	var opt BasicOptions
 	fs := flag.NewFlagSet("config", flag.ContinueOnError)
 
@@ -38,6 +38,23 @@ func (c *configCmd) Run(args []string) int {
 	repo, repoCode := NewRepo(opt.Base, opt.Remote)
 	if repoCode != exitcode.Nil {
 		return repoCode
+	}
+
+	if opt.Branch != "" {
+		prevHead, pushHeadErr := repo.PushHead(opt.Branch)
+		if pushHeadErr != nil {
+			log.Errore("failed to checkout to branch", pushHeadErr, "branch", opt.Branch)
+			return exitcode.RepoCheckoutFailed
+		}
+		defer func() {
+			popHeadErr := repo.PopHead(prevHead)
+			if popHeadErr != nil {
+				log.Errore("failed to reset to head", popHeadErr, "head", prevHead)
+				if ext != exitcode.Nil {
+					ext = exitcode.RepoCheckoutFailed
+				}
+			}
+		}()
 	}
 
 	v := fs.Args()
