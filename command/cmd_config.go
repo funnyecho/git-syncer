@@ -70,7 +70,7 @@ func (c *configCmd) Run(args []string) (ext int) {
 			return errors.GetErrorCode(configErr)
 		}
 
-		fmt.Print(value)
+		fmt.Println(value)
 		return exitcode.Nil
 	}
 
