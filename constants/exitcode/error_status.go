@@ -12,8 +12,14 @@ const (
 	// Usage invalid usage
 	Usage
 
-	// MissingArguments missing required arguments
+	// MissingArguments missing required arguments for command
 	MissingArguments
+
+	// InvalidParams invalid func params
+	InvalidParams
+
+	// InvalidRunnerDependency means invalid runner dependency
+	InvalidRunnerDependency
 )
 
 const (
@@ -37,27 +43,30 @@ const (
 
 	// RepoConfigNotFound config not found
 	RepoConfigNotFound
+
+	// RepoInvalidGitVersion git version not supported
+	RepoInvalidGitVersion
 )
 
 const (
-	// ContribForbidden unknown error
-	ContribForbidden = 300 + iota
+	// RemoteForbidden unknown error
+	RemoteForbidden = 300 + iota
 
-	// ContribHeadNotFound head not found
-	ContribHeadNotFound
+	// RemoteHeadNotFound head not found
+	RemoteHeadNotFound
 
-	// ContribSyncFailed failed to sync
-	ContribSyncFailed
+	// RemoteSyncFailed failed to sync
+	RemoteSyncFailed
 
-	// ContribLocked contrib was locked
-	ContribLocked
+	// RemoteLocked Remote was locked
+	RemoteLocked
 
-	// ContribUnlock contrib is unlock
-	ContribUnlock
+	// RemoteUnlock Remote is unlock
+	RemoteUnlock
 
-	// ContribInvalidLog invalid log format
-	ContribInvalidLog
+	// RemoteInvalidLog invalid log format
+	RemoteInvalidLog
 
-	// ContribInvalidLock invalid lock format
-	ContribInvalidLock
+	// RemoteInvalidLock invalid lock format
+	RemoteInvalidLock
 )

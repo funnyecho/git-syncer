@@ -7,6 +7,21 @@ import (
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 )
 
+// Err error creation shortcut
+func Err(errCode int, message string, messageArgs ...interface{}) *Error {
+	return NewError(WithMsgf(message, messageArgs...), WithCode(errCode))
+}
+
+// Wrap wrap error shortcut
+func Wrap(wrapErr error, message string, messageArgs ...interface{}) *Error {
+	return NewError(WithMsgf(message, messageArgs...), WithErr(wrapErr))
+}
+
+// WrapC wrap error with code shortcut
+func WrapC(wrapErr error, errCode int, message string, messageArgs ...interface{}) *Error {
+	return NewError(WithMsgf(message, messageArgs...), WithCode(errCode), WithErr(wrapErr))
+}
+
 // Error stacked error with status code
 // [Working with Errors in Go 1.13](https://blog.golang.org/go1.13-errors)
 type Error struct {
