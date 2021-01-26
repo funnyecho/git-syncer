@@ -24,8 +24,7 @@ vendor/
 # auto-generated files
 *.pb.go
 
-build/
-release/
+dist/
 tmp/
 storage/
 ./config/

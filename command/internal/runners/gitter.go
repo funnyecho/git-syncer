@@ -7,6 +7,7 @@ import (
 	"github.com/funnyecho/git-syncer/command/internal/runner"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
+	"github.com/funnyecho/git-syncer/pkg/log"
 	"github.com/funnyecho/git-syncer/syncer/gitter"
 )
 
@@ -47,12 +48,25 @@ type remoteGitter struct {
 func (g *remoteGitter) GetConfig(key string) (string, error) {
 	if g.remote != "" {
 		v, err := g.Gitter.GetConfig(fmt.Sprintf("%s.%s", g.remote, key))
-		if err == nil && v != "" {
-			return v, err
+		if err == nil {
+			return v, nil
 		}
+		log.Infow("failed to get config in remote", "remote", g.remote, "key", key)
 	}
 
-	return g.Gitter.GetConfig(fmt.Sprintf("%s.%s", defaultRemote, key))
+	v, err := g.Gitter.GetConfig(fmt.Sprintf("%s.%s", defaultRemote, key))
+	if err == nil {
+		return v, nil
+	}
+	log.Infow("failed to get config in remote", "remote", defaultRemote, "key", key)
+
+	v, err = g.Gitter.GetConfig(key)
+	if err == nil {
+		return v, nil
+	}
+	log.Infow("failed to get config without remote", "key", key)
+
+	return "", errors.Err(exitcode.RepoConfigNotFound, "failed to get config %s", key)
 }
 
 // SetConfig implement SetConfig

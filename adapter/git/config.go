@@ -1,11 +1,12 @@
 package git
 
-import (
-	"strings"
-)
+import "fmt"
 
 // ProjectConfigPath project level config file
 const ProjectConfigPath = "./.git-syncer-config"
+
+// GitConfigPrefix prefix in git config
+const GitConfigPrefix = "git-syncer"
 
 // GetConfig implement GetConfig
 func (g *Git) GetConfig(key string) (string, error) {
@@ -14,11 +15,21 @@ func (g *Git) GetConfig(key string) (string, error) {
 	args = append(args, key)
 
 	v, err := output(args)
-	if err != nil {
-		return "", err
+	if err == nil {
+		return v, nil
 	}
 
-	return strings.TrimSpace(string(v)), nil
+	v, err = output([]string{"config", fmt.Sprintf("%s.%s", GitConfigPrefix, key)})
+	if err == nil {
+		return v, nil
+	}
+
+	v, err = output([]string{"config", key})
+	if err == nil {
+		return v, nil
+	}
+
+	return "", err
 }
 
 // SetConfig implement SetConfig

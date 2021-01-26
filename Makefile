@@ -1,6 +1,6 @@
 Project := git-syncer
-BuildDist = build
-ReleaseDist = release
+BuildDist = dist/build
+ReleaseDist = dist/release
 
 Platforms = linux darwin windows
 GOOS = $(shell go env GOOS)
