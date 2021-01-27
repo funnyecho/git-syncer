@@ -9,11 +9,12 @@ import (
 // PrintUsageErr try to print usage info from flagset, and if match, error will be swallowed
 func PrintUsageErr(_ []string) (runner.BubbleTap, error) {
 	return func(e error) error {
-		if flagset, flagsetErr := UseFlagset(); flagsetErr == nil {
+		if e != nil {
 			errCode := errors.GetErrorCode(e)
-			if errCode == exitcode.Usage || errCode == exitcode.MissingArguments {
-				flagset.Usage()
-				return nil
+			if errCode == exitcode.MissingArguments {
+				if flagset, flagsetErr := UseFlagset(); flagsetErr == nil {
+					flagset.Usage()
+				}
 			}
 		}
 

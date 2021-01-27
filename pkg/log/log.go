@@ -11,6 +11,7 @@ var logger *zap.SugaredLogger
 
 func init() {
 	errLevelEncoderConfig := zap.NewProductionEncoderConfig()
+	errLevelEncoderConfig.EncodeTime = zapcore.RFC3339TimeEncoder
 	errLevelEncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 
 	core := zapcore.NewTee(
@@ -22,7 +23,7 @@ func init() {
 			}),
 		),
 		zapcore.NewCore(
-			zapcore.NewConsoleEncoder(zap.NewProductionEncoderConfig()),
+			zapcore.NewConsoleEncoder(errLevelEncoderConfig),
 			zapcore.Lock(os.Stdout),
 			zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
 				return lvl < zapcore.ErrorLevel

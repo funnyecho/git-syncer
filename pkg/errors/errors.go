@@ -3,6 +3,7 @@ package errors
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 )
@@ -37,11 +38,20 @@ func (e *Error) Unwrap() error {
 
 // No need to print wrapped error, `go` print it automatically
 func (e *Error) Error() string {
-	if e.Msg == "" {
-		return fmt.Sprintf("status code: %d", e.Code)
+	sb := strings.Builder{}
+
+	if e.Err != nil {
+		sb.WriteString(e.Err.Error())
+		sb.WriteString("\n")
 	}
 
-	return fmt.Sprintf("status code: %d, error msg: %s", e.Code, e.Msg)
+	if e.Msg == "" {
+		sb.WriteString(fmt.Sprintf("error code: %d", e.Code))
+	} else {
+		sb.WriteString(fmt.Sprintf("error code: %d, error msg: %s", e.Code, e.Msg))
+	}
+
+	return sb.String()
 }
 
 // Is implement `Is`

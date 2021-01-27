@@ -44,6 +44,8 @@ func Push(remote remote.Remote, git gitter.Gitter) error {
 			"delete", fmt.Sprintf("%v/%v", len(deleted), len(deletes)),
 		)
 		return syncErr
+	} else {
+		log.Infow("files was synced", "uploaded", len(uploaded), "deleted", len(deleted))
 	}
 
 	return nil
