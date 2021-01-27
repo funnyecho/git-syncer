@@ -16,12 +16,13 @@ type cmd struct {
 }
 
 func (c *cmd) Help() string {
-	return "Uploads all git-tracked non-ignored files to the remote contrib and " +
-		"creates the log file containing the SHA1 of the latest commit."
+	return "Creates or updates the log file on the remote.\n" +
+		"It assumes that you uploaded all other files already.\n" +
+		"You might have done that with another program."
 }
 
 func (c *cmd) Synopsis() string {
-	return "Setup remote contrib to the latest commit of repo"
+	return "Creates or updates the log file on the remote."
 }
 
 func (c *cmd) Run(args []string) (ext int) {

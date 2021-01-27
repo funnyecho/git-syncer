@@ -16,12 +16,17 @@ type cmd struct {
 }
 
 func (c *cmd) Help() string {
-	return "Uploads all git-tracked non-ignored files to the remote contrib and " +
-		"creates the log file containing the SHA1 of the latest commit."
+	return `Uploads files that have changed and
+deletes files that have been deleted since the last upload.
+If you are using GIT LFS, this uploads LFS link files,
+not large files (stored on LFS server).
+To upload the LFS tracked files, run "git lfs pull"
+before "git syncer push": LFS link files will be replaced with
+large files so they can be uploaded.`
 }
 
 func (c *cmd) Synopsis() string {
-	return "Setup remote contrib to the latest commit of repo"
+	return "Push changed files to remote"
 }
 
 func (c *cmd) Run(args []string) (ext int) {
