@@ -15,7 +15,7 @@ const (
 const LowestVerbose = VerboseDebug
 
 // verbose used verbose level
-var verbose = VerboseInfo
+var verbose = VerboseDebug
 
 // UseVerbose get used verbose level
 func UseVerbose() int {

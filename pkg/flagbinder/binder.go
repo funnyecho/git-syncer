@@ -25,40 +25,66 @@ func bindFlags(f interface{}, fs *flag.FlagSet) error {
 	}
 
 	v := reflect.ValueOf(f).Elem()
-	t := v.Type()
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
 
-		rawNames := field.Tag.Get("flag")
-		dValue := field.Tag.Get("value")
-		usage := field.Tag.Get("usage")
+	return bindFlagsFromValue("", v, fs)
+}
+
+func bindFlagsFromValue(prefix string, v reflect.Value, flagset *flag.FlagSet) error {
+	t := v.Type()
+
+	for i := 0; i < t.NumField(); i++ {
+		vField := v.Field(i)
+		tField := t.Field(i)
+
+		fieldKind := vField.Kind()
+		fieldAddr := vField.UnsafeAddr()
+
+		rawNames := tField.Tag.Get("flag")
+		dValue := tField.Tag.Get("value")
+		usage := tField.Tag.Get("usage")
+
+		if fieldKind == reflect.Struct {
+			if rawNames != "" {
+				for _, name := range strings.Split(rawNames, ",") {
+					var p string
+					if prefix == "" {
+						p = name
+					} else {
+						p = fmt.Sprintf("%s--%s", prefix, name)
+					}
+					if err := bindFlagsFromValue(p, vField, flagset); err != nil {
+						return err
+					}
+				}
+			} else {
+				if err := bindFlagsFromValue(prefix, vField, flagset); err != nil {
+					return err
+				}
+			}
+
+			continue
+		}
 
 		if rawNames == "" {
 			continue
 		}
 
-		fieldAddr := v.Field(i).UnsafeAddr()
-
-		if rawNames == "@nest@" {
-			if nestErr := bindFlags(unsafe.Pointer(fieldAddr), fs); nestErr != nil {
-				return nestErr
-			}
-			continue
-		}
-
 		names := strings.Split(rawNames, ",")
 		for _, name := range names {
-			switch field.Type.Kind() {
+			if prefix != "" {
+				name = fmt.Sprintf("%s--%s", prefix, name)
+			}
+			switch fieldKind {
 			case reflect.Bool:
 				value, _ := strconv.ParseBool(dValue)
-				fs.BoolVar((*bool)(unsafe.Pointer(fieldAddr)), name, value, usage)
+				flagset.BoolVar((*bool)(unsafe.Pointer(fieldAddr)), name, value, usage)
 			case reflect.String:
-				fs.StringVar((*string)(unsafe.Pointer(fieldAddr)), name, dValue, usage)
+				flagset.StringVar((*string)(unsafe.Pointer(fieldAddr)), name, dValue, usage)
 			case reflect.Int:
 				value, _ := strconv.Atoi(dValue)
-				fs.IntVar((*int)(unsafe.Pointer(fieldAddr)), name, value, usage)
+				flagset.IntVar((*int)(unsafe.Pointer(fieldAddr)), name, value, usage)
 			default:
-				return fmt.Errorf("type of field %s:%s do not support", field.Name, field.Type.String())
+				return fmt.Errorf("type of field %s:%s do not support", tField.Name, tField.Type.String())
 			}
 		}
 	}

@@ -25,7 +25,7 @@ func (c *cmd) Synopsis() string {
 }
 
 func (c *cmd) Run(args []string) (ext int) {
-	opt := &options{}
+	opt := &Options{}
 
 	return runner.Run(
 		args,
