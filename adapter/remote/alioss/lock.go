@@ -11,26 +11,13 @@ import (
 	"github.com/google/uuid"
 )
 
-/*
-Lock file format:
-
-Mutex: RLock // RLock, RWLock
-Date: Mon Jan 18 16:41:44 2021 +0800 	// lock date
-Locker: SamHwang1990 <samhwang1990@gmail.com>
-LockID: [uuid.v4]
-WLockSHA1: 664c7be795e0dce15586207234bdb2ab0d7da844 // lock writer to target sha1 (local repo sha1, not synced sha1)
-
-*/
-
 type lockType int8
 
 // LockInfo lock info
 type LockInfo struct {
-	Mutex     lockType `json:"Mutex"`
-	Date      JSONTime `json:"Date"`
-	Locker    string   `json:"Locker"`
-	LockID    string   `json:"LockID"`
-	WLockSHA1 string   `json:"WLockSHA1"`
+	Mutex  lockType `json:"Mutex"`
+	Date   JSONTime `json:"Date"`
+	LockID string   `json:"LockID"`
 }
 
 const (
@@ -44,7 +31,7 @@ const (
 	LockRWriter lockType = LockReader | LockWriter
 )
 
-func (a *Alioss) lock(info LockInfo) (string, error) {
+func (a *Alioss) lock(lt lockType) (string, error) {
 	if locked, lockCheckErr := a.isObjectExisted(ObjectLockFile); lockCheckErr != nil {
 		return "", errors.NewError(
 			errors.WithErr(lockCheckErr),
@@ -57,9 +44,7 @@ func (a *Alioss) lock(info LockInfo) (string, error) {
 		)
 	}
 
-	if info.LockID == "" {
-		(&info).LockID = uuid.New().String()
-	}
+	info := a.getLockInfo(lt)
 
 	jsonInfo, jsonErr := json.Marshal(info)
 	if jsonErr != nil {
@@ -148,18 +133,6 @@ func (a *Alioss) getLockInfo(lt lockType) LockInfo {
 	return LockInfo{
 		Mutex:  lt,
 		Date:   JSONTime{time.Now()},
-		Locker: a.getExecutor(),
 		LockID: uuid.New().String(),
-		// WLockSHA1: wLockSHA1,
 	}
-}
-
-func (a *Alioss) getLockInfoWithWLockSHA1(lt lockType, sha1 string) LockInfo {
-	info := a.getLockInfo(lt)
-
-	if lt&LockWriter != LockIdle {
-		info.WLockSHA1 = sha1
-	}
-
-	return info
 }

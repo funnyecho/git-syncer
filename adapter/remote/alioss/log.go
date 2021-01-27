@@ -26,7 +26,6 @@ Date:   Mon Jan 18 16:41:44 2021 +0800
 type LogInfo struct {
 	SHA1     string         `json:"SHA1"`
 	RefSHA1  string         `json:"RefSHA1"`
-	Executor string         `json:"Executor"`
 	Date     JSONTime       `json:"Date"`
 	Uploaded []UploadedFile `json:"Uploaded"`
 	Deleted  []string       `json:"Deleted"`

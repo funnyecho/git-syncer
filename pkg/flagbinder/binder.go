@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"strings"
 	"unsafe"
 )
 
@@ -28,34 +29,37 @@ func bindFlags(f interface{}, fs *flag.FlagSet) error {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
-		name := field.Tag.Get("flag")
+		rawNames := field.Tag.Get("flag")
 		dValue := field.Tag.Get("value")
 		usage := field.Tag.Get("usage")
 
-		if name == "" {
+		if rawNames == "" {
 			continue
 		}
 
 		fieldAddr := v.Field(i).UnsafeAddr()
 
-		if name == "@nest@" {
+		if rawNames == "@nest@" {
 			if nestErr := bindFlags(unsafe.Pointer(fieldAddr), fs); nestErr != nil {
 				return nestErr
 			}
 			continue
 		}
 
-		switch field.Type.Kind() {
-		case reflect.Bool:
-			value, _ := strconv.ParseBool(dValue)
-			fs.BoolVar((*bool)(unsafe.Pointer(fieldAddr)), name, value, usage)
-		case reflect.String:
-			fs.StringVar((*string)(unsafe.Pointer(fieldAddr)), name, dValue, usage)
-		case reflect.Int:
-			value, _ := strconv.Atoi(dValue)
-			fs.IntVar((*int)(unsafe.Pointer(fieldAddr)), name, value, usage)
-		default:
-			return fmt.Errorf("type of field %s:%s do not support", field.Name, field.Type.String())
+		names := strings.Split(rawNames, ",")
+		for _, name := range names {
+			switch field.Type.Kind() {
+			case reflect.Bool:
+				value, _ := strconv.ParseBool(dValue)
+				fs.BoolVar((*bool)(unsafe.Pointer(fieldAddr)), name, value, usage)
+			case reflect.String:
+				fs.StringVar((*string)(unsafe.Pointer(fieldAddr)), name, dValue, usage)
+			case reflect.Int:
+				value, _ := strconv.Atoi(dValue)
+				fs.IntVar((*int)(unsafe.Pointer(fieldAddr)), name, value, usage)
+			default:
+				return fmt.Errorf("type of field %s:%s do not support", field.Name, field.Type.String())
+			}
 		}
 	}
 

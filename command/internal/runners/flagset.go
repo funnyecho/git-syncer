@@ -2,6 +2,7 @@ package runners
 
 import (
 	"flag"
+	"strings"
 
 	"github.com/funnyecho/git-syncer/command/internal/runner"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
@@ -11,9 +12,9 @@ import (
 )
 
 const (
-	flagWorkingDir = "wd"
-	flagRemote     = "remote"
-	flagHead       = "head"
+	flagWorkingDir  = "working-dir,wd"
+	flagWorkingHead = "working-head,wh"
+	flagRemote      = "remote"
 )
 
 // WithFlagset wrap flagset runner
@@ -67,11 +68,15 @@ func useFlag(name string) (string, error) {
 		return "", flagsetErr
 	}
 
-	flag := flagset.Lookup(name)
-	if flag != nil {
-		if val := flag.Value.String(); val != "" {
-			return val, nil
+	names := strings.Split(name, ",")
+	for _, n := range names {
+		flag := flagset.Lookup(n)
+		if flag != nil {
+			if val := flag.Value.String(); val != "" {
+				return val, nil
+			}
 		}
+
 	}
 
 	return "", nil

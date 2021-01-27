@@ -7,7 +7,7 @@ import (
 
 // WorkingHead checkout to new working head if head flag provided
 func WorkingHead(_ []string) (runner.BubbleTap, error) {
-	head, _ := useFlag(flagHead)
+	head, _ := useFlag(flagWorkingHead)
 	if head == "" {
 		return nil, nil
 	}

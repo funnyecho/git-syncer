@@ -51,32 +51,31 @@ func (g *remoteGitter) GetConfig(key string) (string, error) {
 		if err == nil {
 			return v, nil
 		}
-		log.Infow("failed to get config in remote", "remote", g.remote, "key", key)
+		log.Debugw("config not found with remote", "remote", g.remote, "key", key)
 	}
 
 	v, err := g.Gitter.GetConfig(fmt.Sprintf("%s.%s", defaultRemote, key))
 	if err == nil {
 		return v, nil
 	}
-	log.Infow("failed to get config in remote", "remote", defaultRemote, "key", key)
+	log.Debugw("config not found with remote", "remote", defaultRemote, "key", key)
 
 	v, err = g.Gitter.GetConfig(key)
 	if err == nil {
 		return v, nil
 	}
-	log.Infow("failed to get config without remote", "key", key)
+	log.Debugw("config not found without remote", "key", key)
 
 	return "", errors.Err(exitcode.RepoConfigNotFound, "failed to get config %s", key)
 }
 
 // SetConfig implement SetConfig
 func (g *remoteGitter) SetConfig(key, value string) error {
-	if g.remote != "" {
-		err := g.Gitter.SetConfig(fmt.Sprintf("%s.%s", g.remote, key), value)
-		if err == nil {
-			return err
-		}
+	r := g.remote
+	if r == "" {
+		r = defaultRemote
 	}
 
-	return g.Gitter.SetConfig(fmt.Sprintf("%s.%s", defaultRemote, key), value)
+	log.Debugw("setting config into remote", "remote", r, "key", key, "value", value)
+	return g.Gitter.SetConfig(fmt.Sprintf("%s.%s", r, key), value)
 }

@@ -29,7 +29,7 @@ type Alioss struct {
 
 // GetHeadSHA1 get head sha1 from alioss contrib
 func (a *Alioss) GetHeadSHA1() (string, error) {
-	rLockID, rLockErr := a.lock(a.getLockInfo(LockReader))
+	rLockID, rLockErr := a.lock(LockReader)
 	if rLockErr != nil {
 		return "", rLockErr
 	}
@@ -57,7 +57,7 @@ func (a *Alioss) GetHeadSHA1() (string, error) {
 
 // Sync sync files to alioss contrib
 func (a *Alioss) Sync(sha1 string, uploads []string, deletes []string) (uploaded []string, deleted []string, err error) {
-	lockID, lockErr := a.lock(a.getLockInfoWithWLockSHA1(LockRWriter, sha1))
+	lockID, lockErr := a.lock(LockRWriter)
 	if lockErr != nil {
 		err = lockErr
 		return
@@ -129,7 +129,6 @@ func (a *Alioss) Sync(sha1 string, uploads []string, deletes []string) (uploaded
 	logInfo := LogInfo{
 		SHA1:     sha1,
 		RefSHA1:  head.SHA1,
-		Executor: a.getExecutor(),
 		Date:     JSONTime{time.Now()},
 		Uploaded: uploadedFiles,
 		Deleted:  deleted,
