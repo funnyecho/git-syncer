@@ -20,6 +20,9 @@ const (
 
 	// InvalidRunnerDependency means invalid runner dependency
 	InvalidRunnerDependency
+
+	// VariableNotFound means variable not found
+	VariableNotFound
 )
 
 const (

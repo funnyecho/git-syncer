@@ -9,9 +9,8 @@ import (
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/pkg/log"
 	"github.com/funnyecho/git-syncer/syncer/gitter"
+	"github.com/funnyecho/git-syncer/variable"
 )
-
-var gt gitter.Gitter
 
 var defaultRemote = "default"
 
@@ -23,22 +22,16 @@ func Gitter(_ []string) (runner.BubbleTap, error) {
 		return nil, remoteErr
 	}
 
-	gt = &remoteGitter{
+	variable.WithGitter(&remoteGitter{
 		remote,
 		git.New(),
-	}
+	})
 
 	return nil, nil
 }
 
 // UseGitter get gitter
-func UseGitter() (gitter.Gitter, error) {
-	if gt == nil {
-		return nil, errors.Err(exitcode.InvalidRunnerDependency, "failed to get gitter from runner")
-	}
-
-	return gt, nil
-}
+var UseGitter = variable.UseGitter
 
 type remoteGitter struct {
 	remote string
