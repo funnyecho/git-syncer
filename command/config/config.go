@@ -45,10 +45,7 @@ func (c *cmd) Run(args []string) (ext int) {
 				return gitterErr
 			}
 
-			return syncer.Config(syncer.ConfigParams{
-				ConfigReadWriter: gitter,
-				FlagSet:          flagset,
-			})
+			return syncer.Config(gitter, flagset.Args())
 		}),
 	)
 }

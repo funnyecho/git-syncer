@@ -20,7 +20,7 @@ func Run(args []string, tappers ...CaptureTap) (code int) {
 	defer func() {
 		pe := recover()
 		if pe != nil {
-			log.Errorw("uncapture error", "panic", pe)
+			log.Errorw("panic error captured in runner", "panic", pe)
 			code = errors.GetErrorCode(pe.(error))
 		}
 	}()
