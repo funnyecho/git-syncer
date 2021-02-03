@@ -1,7 +1,6 @@
 package bucket
 
 import (
-	"io"
 	"strings"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
@@ -9,17 +8,8 @@ import (
 	"github.com/funnyecho/git-syncer/pkg/errors"
 )
 
-// Bucket interface to access alioss bucket
-type Bucket interface {
-	GetObject(key string, options ...oss.Option) (io.ReadCloser, error)
-	PutObject(key string, reader io.Reader, options ...oss.Option) error
-	DeleteObject(key string, options ...oss.Option) error
-	IsObjectExist(key string, options ...oss.Option) (bool, error)
-	PutSymlink(symObjectKey string, targetObjectKey string, options ...oss.Option) error
-}
-
 // New create bucket
-func New(opt *Options) (Bucket, error) {
+func New(opt *Options) (*Bucket, error) {
 	if opt == nil {
 		return nil, errors.NewError(errors.WithMsg("bucket options requried"), errors.WithCode(exitcode.MissingArguments))
 	}
@@ -38,13 +28,13 @@ func New(opt *Options) (Bucket, error) {
 		return nil, bucketErr
 	}
 
-	return &bucket{
+	return &Bucket{
 		opt,
 		bkt,
 	}, nil
 }
 
-type bucket struct {
+type Bucket struct {
 	opt *Options
 	*oss.Bucket
 }

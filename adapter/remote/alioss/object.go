@@ -10,12 +10,12 @@ import (
 
 // getObject get object in bucket
 func (a *Alioss) getObject(path string) (io.ReadCloser, error) {
-	return a.bucket.GetObject(a.pathToKey(path), nil)
+	return a.bucket.GetObject(a.PathToKey(path), nil)
 }
 
 // uploadObject upload object
 func (a *Alioss) uploadObject(path string, stream io.Reader, options ...oss.Option) (string, error) {
-	key := a.pathToKey(path)
+	key := a.PathToKey(path)
 	uploadErr := a.bucket.PutObject(
 		key,
 		stream,
@@ -34,7 +34,7 @@ func (a *Alioss) uploadObject(path string, stream io.Reader, options ...oss.Opti
 
 // deleteObject delete object
 func (a *Alioss) deleteObject(path string) (string, error) {
-	key := a.pathToKey(path)
+	key := a.PathToKey(path)
 
 	deleteErr := a.bucket.DeleteObject(key)
 	if deleteErr != nil {
@@ -49,7 +49,7 @@ func (a *Alioss) isObjectExisted(path string) (bool, error) {
 		return false, errors.NewError(errors.WithMsg("path is required to check whether object exited"), errors.WithCode(exitcode.MissingArguments))
 	}
 
-	return a.bucket.IsObjectExist(a.pathToKey(path))
+	return a.bucket.IsObjectExist(a.PathToKey(path))
 }
 
 func (a *Alioss) putSymlink(srcPath, linkPath string, options ...oss.Option) error {
@@ -57,5 +57,5 @@ func (a *Alioss) putSymlink(srcPath, linkPath string, options ...oss.Option) err
 		return errors.NewError(errors.WithMsg("srcPath or linkPath is required to put symlink"), errors.WithCode(exitcode.MissingArguments))
 	}
 
-	return a.bucket.PutSymlink(a.pathToKey(linkPath), a.pathToKey(srcPath), options...)
+	return a.bucket.PutSymlink(a.PathToKey(linkPath), a.PathToKey(srcPath), options...)
 }

@@ -21,12 +21,13 @@ func (t JSONTime) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON parse to time.Time
-func (t JSONTime) UnmarshalJSON(bs []byte) error {
+func (t *JSONTime) UnmarshalJSON(bs []byte) error {
 	tm, tErr := time.Parse(JSONTimeLayout, strings.Trim(string(bs), "\""))
 	if tErr != nil {
 		return tErr
 	}
 
 	t.Time = tm
+
 	return nil
 }

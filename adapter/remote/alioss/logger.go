@@ -10,18 +10,6 @@ import (
 	"github.com/funnyecho/git-syncer/pkg/errors"
 )
 
-/*
-Log item format:
-
-SHA1: 664c7be795e0dce15586207234bdb2ab0d7da844
-Executor: SamHwang1990 <samhwang1990@gmail.com>
-Date:   Mon Jan 18 16:41:44 2021 +0800
-
- upload [path/to/uploaded/file] [file size] [file sha1]
- delete [path/to/deleted/file] [file size] [file sha1]
-
-*/
-
 // LogInfo log info
 type LogInfo struct {
 	SHA1     string         `json:"SHA1"`
@@ -39,7 +27,7 @@ type UploadedFile struct {
 }
 
 // PushLog log to contrib
-func (a *Alioss) pushLog(info LogInfo) error {
+func (a *Alioss) PushLog(info LogInfo) error {
 	if info.SHA1 == "" {
 		return errors.NewError(
 			errors.WithCode(exitcode.MissingArguments),
@@ -79,7 +67,7 @@ func (a *Alioss) pushLog(info LogInfo) error {
 }
 
 // PeekLog get head log
-func (a *Alioss) peekLog() (*LogInfo, error) {
+func (a *Alioss) PeekLog() (*LogInfo, error) {
 	headLogReader, headLogReaderErr := a.getObject(ObjectHeadLinkFile)
 	if headLogReaderErr != nil {
 		if IsObjectNotFoundErr(headLogReaderErr) {

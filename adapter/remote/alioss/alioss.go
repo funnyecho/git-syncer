@@ -6,13 +6,12 @@ import (
 	"time"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"github.com/funnyecho/git-syncer/adapter/remote/alioss/bucket"
 	"github.com/funnyecho/git-syncer/pkg/fs"
 	"github.com/funnyecho/git-syncer/pkg/log"
 )
 
 // New create alioss remote
-func New(opt *Options, bkt bucket.Bucket) (*Alioss, error) {
+func New(opt Options, bkt Bucket) (*Alioss, error) {
 	c := &Alioss{
 		opt,
 		bkt,
@@ -23,8 +22,8 @@ func New(opt *Options, bkt bucket.Bucket) (*Alioss, error) {
 
 // Alioss alioss contrib
 type Alioss struct {
-	opts   *Options
-	bucket bucket.Bucket
+	opts   Options
+	bucket Bucket
 }
 
 // GetHeadSHA1 get head sha1 from alioss contrib
@@ -47,7 +46,7 @@ func (a *Alioss) GetHeadSHA1() (string, error) {
 		}
 	}()
 
-	head, headErr := a.peekLog()
+	head, headErr := a.PeekLog()
 	if headErr != nil {
 		return "", headErr
 	}
@@ -119,7 +118,7 @@ func (a *Alioss) Sync(sha1 string, uploads []string, deletes []string) (uploaded
 		deleted = append(deleted, p)
 	}
 
-	head, headErr := a.peekLog()
+	head, headErr := a.PeekLog()
 	if headErr != nil {
 		log.Infow("failed to get head log", "err", headErr)
 	} else if head == nil {
@@ -133,7 +132,7 @@ func (a *Alioss) Sync(sha1 string, uploads []string, deletes []string) (uploaded
 		Uploaded: uploadedFiles,
 		Deleted:  deleted,
 	}
-	if logErr := a.pushLog(logInfo); logErr != nil {
+	if logErr := a.PushLog(logInfo); logErr != nil {
 		err = logErr
 		return
 	}

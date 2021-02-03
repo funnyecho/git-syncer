@@ -35,6 +35,7 @@ const (
 // LockMaxAge lock max age
 const LockMaxAge = time.Minute * 5
 
+// lock remote with lock type
 func (a *Alioss) lock(lt lockType) (string, error) {
 	if locked, lockCheckErr := a.isObjectExisted(ObjectLockFile); lockCheckErr != nil {
 		return "", errors.NewError(
@@ -74,6 +75,7 @@ func (a *Alioss) lock(lt lockType) (string, error) {
 	return info.LockID, nil
 }
 
+// unlock remote with id
 func (a *Alioss) unlock(id string) error {
 	if locked, lockCheckErr := a.isObjectExisted(ObjectLockFile); lockCheckErr != nil {
 		return errors.NewError(

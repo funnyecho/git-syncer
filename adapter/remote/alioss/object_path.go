@@ -13,6 +13,7 @@ const (
 	ObjectLogDir = ".git-syncer/logs"
 )
 
-func (a *Alioss) pathToKey(path string) string {
+// PathToKey return path with `base` prefix
+func (a *Alioss) PathToKey(path string) string {
 	return filepath.Join(a.opts.Base(), path)
 }
