@@ -39,6 +39,8 @@ func (c *cmd) Run(args []string) (ext int) {
 		runners.WithFlagset("push", opt),
 		runners.WorkingDir,
 		runners.Gitter,
+		runners.Verbose,
+		runners.WorkingHead,
 		runners.Contrib,
 		runners.WithTarget(func(_ []string) error {
 			gitter, gitterErr := runners.UseGitter()

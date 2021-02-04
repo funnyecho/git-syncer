@@ -33,6 +33,7 @@ func (c *cmd) Run(args []string) (ext int) {
 		runners.WithFlagset("config", opt),
 		runners.WorkingDir,
 		runners.Gitter,
+		runners.Verbose,
 		runners.WorkingHead,
 		runners.WithTarget(func(_ []string) error {
 			flagset, flagsetErr := runners.UseFlagset()

@@ -8,6 +8,7 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
+	"github.com/funnyecho/git-syncer/pkg/log"
 )
 
 // LogInfo log info
@@ -28,6 +29,8 @@ type UploadedFile struct {
 
 // PushLog log to contrib
 func (a *Alioss) PushLog(info LogInfo) error {
+	log.Debugw("push log to alioss", "logInfo", info)
+
 	if info.SHA1 == "" {
 		return errors.NewError(
 			errors.WithCode(exitcode.MissingArguments),
@@ -99,6 +102,8 @@ func (a *Alioss) PeekLog() (*LogInfo, error) {
 			errors.WithCode(exitcode.ContribInvalidLog),
 		)
 	}
+
+	log.Debugw("peek log from alioss", "logInfo", info)
 
 	return &info, nil
 }

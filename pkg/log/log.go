@@ -3,6 +3,7 @@ package log
 import (
 	"os"
 
+	"github.com/funnyecho/git-syncer/variable"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -36,7 +37,7 @@ func init() {
 }
 
 func Error(keyvals ...interface{}) {
-	if verbose < VerboseError {
+	if !variable.UseVerboseError() {
 		return
 	}
 
@@ -44,7 +45,7 @@ func Error(keyvals ...interface{}) {
 }
 
 func Info(keyvals ...interface{}) {
-	if verbose < VerboseInfo {
+	if !variable.UseVerboseInfo() {
 		return
 	}
 
@@ -52,7 +53,7 @@ func Info(keyvals ...interface{}) {
 }
 
 func Debug(keyvals ...interface{}) {
-	if verbose < VerboseDebug {
+	if !variable.UseVerboseDebug() {
 		return
 	}
 
@@ -60,7 +61,7 @@ func Debug(keyvals ...interface{}) {
 }
 
 func Errorw(msg string, keyvals ...interface{}) {
-	if verbose < VerboseError {
+	if !variable.UseVerboseError() {
 		return
 	}
 
@@ -68,7 +69,7 @@ func Errorw(msg string, keyvals ...interface{}) {
 }
 
 func Infow(msg string, keyvals ...interface{}) {
-	if verbose < VerboseInfo {
+	if !variable.UseVerboseInfo() {
 		return
 	}
 
@@ -76,7 +77,7 @@ func Infow(msg string, keyvals ...interface{}) {
 }
 
 func Debugw(msg string, keyvals ...interface{}) {
-	if verbose < VerboseDebug {
+	if !variable.UseVerboseDebug() {
 		return
 	}
 
@@ -84,7 +85,7 @@ func Debugw(msg string, keyvals ...interface{}) {
 }
 
 func Errore(msg string, err error, keyvals ...interface{}) {
-	if verbose < VerboseError {
+	if !variable.UseVerboseError() {
 		return
 	}
 

@@ -42,6 +42,8 @@ See **Contribs** section below for more information about `contrib-name`.
 
 `-remote [remote]`: Synchronize repository to remote. See **remote** section below for more information.
 
+`-verbose [verbose]`: Verbose level, priority from high to low: silent -> error -> info -> debug. Default with `info`.
+
 ## Config
 
 `git-syncer` use config file `.git-syncer-config` located in root working dir instead of default git config file localed in `.git`.

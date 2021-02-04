@@ -15,6 +15,7 @@ const (
 	flagWorkingDir  = "working-dir,wd"
 	flagWorkingHead = "working-head,wh"
 	flagRemote      = "remote"
+	flagVerbose     = "verbose"
 )
 
 // WithFlagset wrap flagset runner

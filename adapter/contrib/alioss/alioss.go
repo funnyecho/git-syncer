@@ -8,6 +8,7 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/funnyecho/git-syncer/pkg/fs"
 	"github.com/funnyecho/git-syncer/pkg/log"
+	"github.com/gosuri/uilive"
 )
 
 // New create alioss contrib
@@ -77,38 +78,33 @@ func (a *Alioss) Sync(sha1 string, uploads []string, deletes []string) (uploaded
 		}
 	}()
 
-	for _, p := range uploads {
-		f, fErr := os.Open(p)
-		if fErr != nil {
-			err = fErr
+	uploadProgress := uilive.New()
+	uploadProgress.Start()
+
+	defer uploadProgress.Stop()
+
+	fmt.Println("syncing files to alioss")
+	fmt.Fprintf(uploadProgress, "Uploading.. (%d/%d) \n", 0, len(uploads))
+
+	for i, p := range uploads {
+		if udF, uploadErr := a.uploadFile(p); uploadErr != nil {
+			err = uploadErr
 			return
-		}
-		defer f.Close()
-
-		_, uErr := a.uploadObject(p, f, oss.ObjectACL(oss.ACLPublicRead))
-		if uErr != nil {
-			err = uErr
-			return
+		} else {
+			uploadedFiles = append(uploadedFiles, *udF)
 		}
 
-		udF := UploadedFile{
-			Path: p,
-		}
-
-		fStat, fsErr := os.Stat(p)
-		if fsErr == nil {
-			udF.Size = fStat.Size()
-		}
-
-		fSHA1, fSHA1Err := fs.GetFileSHA1(p)
-		if fSHA1Err == nil {
-			udF.SHA1 = fmt.Sprintf("%x", fSHA1)
-		}
-
-		uploadedFiles = append(uploadedFiles, udF)
+		fmt.Fprintf(uploadProgress, "Uploading.. (%d/%d) \n", i+1, len(uploads))
 	}
 
-	for _, p := range deletes {
+	deleteProgress := uilive.New()
+	deleteProgress.Start()
+
+	defer deleteProgress.Stop()
+
+	fmt.Fprintf(uploadProgress, "Deleting.. (%d/%d) \n", 0, len(deletes))
+
+	for i, p := range deletes {
 		_, uErr := a.deleteObject(p)
 		if uErr != nil {
 			err = uErr
@@ -116,6 +112,7 @@ func (a *Alioss) Sync(sha1 string, uploads []string, deletes []string) (uploaded
 		}
 
 		deleted = append(deleted, p)
+		fmt.Fprintf(uploadProgress, "Deleting.. (%d/%d) \n", i+1, len(deletes))
 	}
 
 	head, headErr := a.PeekLog()
@@ -138,4 +135,33 @@ func (a *Alioss) Sync(sha1 string, uploads []string, deletes []string) (uploaded
 	}
 
 	return
+}
+
+func (a *Alioss) uploadFile(p string) (*UploadedFile, error) {
+	f, fErr := os.Open(p)
+	if fErr != nil {
+		return nil, fErr
+	}
+	defer f.Close()
+
+	_, uErr := a.uploadObject(p, f, oss.ObjectACL(oss.ACLPublicRead))
+	if uErr != nil {
+		return nil, uErr
+	}
+
+	udF := UploadedFile{
+		Path: p,
+	}
+
+	fStat, fsErr := os.Stat(p)
+	if fsErr == nil {
+		udF.Size = fStat.Size()
+	}
+
+	fSHA1, fSHA1Err := fs.GetFileSHA1(p)
+	if fSHA1Err == nil {
+		udF.SHA1 = fmt.Sprintf("%x", fSHA1)
+	}
+
+	return &udF, nil
 }

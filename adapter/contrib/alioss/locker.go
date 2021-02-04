@@ -8,6 +8,7 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
+	"github.com/funnyecho/git-syncer/pkg/log"
 	"github.com/google/uuid"
 )
 
@@ -63,6 +64,8 @@ func (a *Alioss) lock(lt lockType) (string, error) {
 		return "", marshalErr
 	}
 
+	log.Debugw("lock alioss", "lockInfo", info)
+
 	_, uploadErr := a.uploadObject(ObjectLockFile, bytes.NewBuffer(infoBytes), oss.ObjectACL(oss.ACLPrivate))
 	if uploadErr != nil {
 		return "", errors.NewError(
@@ -102,6 +105,8 @@ func (a *Alioss) unlock(id string) error {
 		)
 	}
 
+	log.Debugw("unlock alioss", "exitedLockInfo", info)
+
 	_, unLockErr := a.deleteObject(ObjectLockFile)
 	if unLockErr != nil {
 		return errors.NewError(
@@ -138,6 +143,8 @@ func (a *Alioss) fetchLockInfo() (*LockInfo, error) {
 	if unmarshalErr := unmarshalLockInfo(&info, infoBuf.Bytes()); unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
+
+	log.Debugw("fetch lock info from alioss", "lockInfo", info)
 
 	return &info, nil
 }
