@@ -35,7 +35,7 @@ const (
 // LockMaxAge lock max age
 const LockMaxAge = time.Minute * 5
 
-// lock remote with lock type
+// lock contrib with lock type
 func (a *Alioss) lock(lt lockType) (string, error) {
 	if locked, lockCheckErr := a.isObjectExisted(ObjectLockFile); lockCheckErr != nil {
 		return "", errors.NewError(
@@ -50,8 +50,8 @@ func (a *Alioss) lock(lt lockType) (string, error) {
 
 		if info.ExpireDate.After(time.Now()) {
 			return "", errors.NewError(
-				errors.WithMsgf("remote was locked already, will be expired at %v", info.ExpireDate),
-				errors.WithCode(exitcode.RemoteLocked),
+				errors.WithMsgf("contrib was locked already, will be expired at %v", info.ExpireDate),
+				errors.WithCode(exitcode.ContribLocked),
 			)
 		}
 	}
@@ -68,25 +68,25 @@ func (a *Alioss) lock(lt lockType) (string, error) {
 		return "", errors.NewError(
 			errors.WithErr(uploadErr),
 			errors.WithMsgf("failed to upload lock file"),
-			errors.WithCode(exitcode.RemoteSyncFailed),
+			errors.WithCode(exitcode.ContribSyncFailed),
 		)
 	}
 
 	return info.LockID, nil
 }
 
-// unlock remote with id
+// unlock contrib with id
 func (a *Alioss) unlock(id string) error {
 	if locked, lockCheckErr := a.isObjectExisted(ObjectLockFile); lockCheckErr != nil {
 		return errors.NewError(
 			errors.WithErr(lockCheckErr),
 			errors.WithMsg("failed to check whether contrib was locked"),
-			errors.WithCode(exitcode.RemoteForbidden),
+			errors.WithCode(exitcode.ContribForbidden),
 		)
 	} else if !locked {
 		return errors.NewError(
 			errors.WithMsg("contrib is unlock"),
-			errors.WithCode(exitcode.RemoteUnlock),
+			errors.WithCode(exitcode.ContribUnlock),
 		)
 	}
 
@@ -107,7 +107,7 @@ func (a *Alioss) unlock(id string) error {
 		return errors.NewError(
 			errors.WithErr(unLockErr),
 			errors.WithMsgf("failed to delete contrib lock file"),
-			errors.WithCode(exitcode.RemoteForbidden),
+			errors.WithCode(exitcode.ContribForbidden),
 		)
 	}
 
@@ -120,7 +120,7 @@ func (a *Alioss) fetchLockInfo() (*LockInfo, error) {
 		return nil, errors.NewError(
 			errors.WithErr(lockFileReaderErr),
 			errors.WithMsg("failed to download lock file"),
-			errors.WithCode(exitcode.RemoteForbidden),
+			errors.WithCode(exitcode.ContribForbidden),
 		)
 	}
 
@@ -130,7 +130,7 @@ func (a *Alioss) fetchLockInfo() (*LockInfo, error) {
 		return nil, errors.NewError(
 			errors.WithErr(lockFileReaderErr),
 			errors.WithMsg("failed to read contrib lock file"),
-			errors.WithCode(exitcode.RemoteForbidden),
+			errors.WithCode(exitcode.ContribForbidden),
 		)
 	}
 
@@ -170,7 +170,7 @@ func marshalLockInfo(i *LockInfo) ([]byte, error) {
 		return nil, errors.NewError(
 			errors.WithErr(jsonErr),
 			errors.WithMsgf("failed to json marshal lock info: %v", i),
-			errors.WithCode(exitcode.RemoteInvalidLock),
+			errors.WithCode(exitcode.ContribInvalidLock),
 		)
 	}
 

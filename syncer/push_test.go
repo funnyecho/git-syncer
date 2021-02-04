@@ -6,17 +6,17 @@ import (
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
 	"github.com/funnyecho/git-syncer/syncer"
+	"github.com/funnyecho/git-syncer/syncer/contrib"
+	"github.com/funnyecho/git-syncer/syncer/contrib/contribtest"
 	"github.com/funnyecho/git-syncer/syncer/gitter"
 	"github.com/funnyecho/git-syncer/syncer/gitter/gittertest"
-	"github.com/funnyecho/git-syncer/syncer/remote"
-	"github.com/funnyecho/git-syncer/syncer/remote/remotetest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPush(t *testing.T) {
 	t.Run("invalid params", func(t *testing.T) {
 		tcs := []struct {
-			remote   remote.Remote
+			contrib  contrib.Contrib
 			gitter   gitter.Gitter
 			exitcode int
 		}{
@@ -31,44 +31,44 @@ func TestPush(t *testing.T) {
 				exitcode.InvalidParams,
 			},
 			{
-				&remotetest.MockRemote{},
+				&contribtest.MockContrib{},
 				nil,
 				exitcode.InvalidParams,
 			},
 		}
 
 		for _, tc := range tcs {
-			err := syncer.Push(tc.remote, tc.gitter)
+			err := syncer.Push(tc.contrib, tc.gitter)
 			assert.Error(t, err)
 			assert.Equal(t, tc.exitcode, errors.GetErrorCode(err))
 		}
 	})
 
 	tcs := []struct {
-		name         string
-		remoteStubIn remotetest.StubIn
-		gitterStubIn gittertest.StubIn
-		exitcode     int
+		name          string
+		contribStubIn contribtest.StubIn
+		gitterStubIn  gittertest.StubIn
+		exitcode      int
 	}{
 		{
-			name: "failed to get remote head sha1",
-			remoteStubIn: remotetest.StubIn{
+			name: "failed to get contrib head sha1",
+			contribStubIn: contribtest.StubIn{
 				GetHeadSHA1Return:    "",
-				GetHeadSHA1ReturnErr: errors.Err(exitcode.RemoteInvalidLog, "mock remote log invalid"),
+				GetHeadSHA1ReturnErr: errors.Err(exitcode.ContribInvalidLog, "mock contrib log invalid"),
 			},
-			exitcode: exitcode.RemoteInvalidLog,
+			exitcode: exitcode.ContribInvalidLog,
 		},
 		{
-			name: "failed when remote head sha1 is empty",
-			remoteStubIn: remotetest.StubIn{
+			name: "failed when contrib head sha1 is empty",
+			contribStubIn: contribtest.StubIn{
 				GetHeadSHA1Return:    "",
 				GetHeadSHA1ReturnErr: nil,
 			},
-			exitcode: exitcode.RemoteHeadNotFound,
+			exitcode: exitcode.ContribHeadNotFound,
 		},
 		{
 			name: "failed to get changed files from repo",
-			remoteStubIn: remotetest.StubIn{
+			contribStubIn: contribtest.StubIn{
 				GetHeadSHA1Return:    "xxooxxoo",
 				GetHeadSHA1ReturnErr: nil,
 			},
@@ -78,35 +78,35 @@ func TestPush(t *testing.T) {
 			exitcode: exitcode.RepoDiffBaseNotFound,
 		},
 		{
-			name: "failed to sync changed files to remote",
-			remoteStubIn: remotetest.StubIn{
+			name: "failed to sync changed files to contrib",
+			contribStubIn: contribtest.StubIn{
 				GetHeadSHA1Return:    "xxooxxoo",
 				GetHeadSHA1ReturnErr: nil,
 
-				SyncReturnErr: errors.Err(exitcode.RemoteLocked, "mock remote locked"),
+				SyncReturnErr: errors.Err(exitcode.ContribLocked, "mock contrib locked"),
 			},
-			exitcode: exitcode.RemoteLocked,
+			exitcode: exitcode.ContribLocked,
 		},
 	}
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			rm := &remotetest.MockRemote{
-				StubIn: tc.remoteStubIn,
+			cb := &contribtest.MockContrib{
+				StubIn: tc.contribStubIn,
 			}
 
 			git := &gittertest.MockGitter{
 				StubIn: tc.gitterStubIn,
 			}
 
-			err := syncer.Push(rm, git)
+			err := syncer.Push(cb, git)
 			assert.Error(t, err)
 			assert.Equal(t, tc.exitcode, errors.GetErrorCode(err))
 		})
 	}
 
-	rm := &remotetest.MockRemote{
-		StubIn: remotetest.StubIn{
+	cb := &contribtest.MockContrib{
+		StubIn: contribtest.StubIn{
 			GetHeadSHA1Return: "ooxxooxx",
 			SyncReturnUploaded: func(s []string) []string {
 				return s
@@ -132,14 +132,14 @@ func TestPush(t *testing.T) {
 		},
 	}
 
-	err := syncer.Push(rm, git)
+	err := syncer.Push(cb, git)
 	assert.Nil(t, err)
 
-	assert.Equal(t, 1, rm.GetHeadSHA1CallTimes)
-	assert.Equal(t, 1, rm.SyncCallTimes)
-	assert.Equal(t, "xxooxxoo", rm.SyncCallSHA1[0])
-	assert.Equal(t, []string{"foo", "bar"}, rm.SyncCallUploads[0])
-	assert.Equal(t, []string{"zoo"}, rm.SyncCallDeletes[0])
+	assert.Equal(t, 1, cb.GetHeadSHA1CallTimes)
+	assert.Equal(t, 1, cb.SyncCallTimes)
+	assert.Equal(t, "xxooxxoo", cb.SyncCallSHA1[0])
+	assert.Equal(t, []string{"foo", "bar"}, cb.SyncCallUploads[0])
+	assert.Equal(t, []string{"zoo"}, cb.SyncCallDeletes[0])
 
 	assert.Equal(t, 1, git.GetHeadSHA1CallTimes)
 	assert.Equal(t, 1, git.ListChangedFilesCallTimes)

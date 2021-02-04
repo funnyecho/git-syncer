@@ -41,7 +41,7 @@ func TestRunner(t *testing.T) {
 	t.Run("error throw in capture stage", func(t *testing.T) {
 		arguments := []string{"foo", "bar"}
 		mDirtyErr := errors.Err(exitcode.RepoDirty, "mock repo is dirty")
-		mLockedErr := errors.Err(exitcode.RemoteLocked, "mock remote locked")
+		mLockedErr := errors.Err(exitcode.ContribLocked, "mock remote locked")
 
 		callIns := []runnerCallIn{
 			{

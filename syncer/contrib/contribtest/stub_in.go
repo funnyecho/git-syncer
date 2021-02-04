@@ -1,4 +1,4 @@
-package remotetest
+package contribtest
 
 // StubIn mock calling source
 type StubIn struct {

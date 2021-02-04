@@ -10,7 +10,7 @@ import (
 	"github.com/funnyecho/git-syncer/pkg/log"
 )
 
-// New create alioss remote
+// New create alioss contrib
 func New(opt Options, bkt Bucket) (*Alioss, error) {
 	c := &Alioss{
 		opt,

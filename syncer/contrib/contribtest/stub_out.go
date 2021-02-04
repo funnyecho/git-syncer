@@ -1,4 +1,4 @@
-package remotetest
+package contribtest
 
 // StubOut mock calling output
 type StubOut struct {

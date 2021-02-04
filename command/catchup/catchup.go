@@ -35,14 +35,14 @@ func (c *cmd) Run(args []string) (ext int) {
 		runners.WithFlagset("catchup", opt),
 		runners.WorkingDir,
 		runners.Gitter,
-		runners.Remote,
+		runners.Contrib,
 		runners.WithTarget(func(_ []string) error {
 			gitter, gitterErr := runners.UseGitter()
 			if gitterErr != nil {
 				return gitterErr
 			}
 
-			remote, remoteErr := runners.UseRemote()
+			remote, remoteErr := runners.UseContrib()
 			if remoteErr != nil {
 				return remoteErr
 			}

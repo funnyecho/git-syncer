@@ -1,22 +1,22 @@
 package main
 
 import (
-	"github.com/funnyecho/git-syncer/adapter/remote/alioss"
-	"github.com/funnyecho/git-syncer/adapter/remote/alioss/bucket"
-	"github.com/funnyecho/git-syncer/adapter/remote/alioss/options"
+	"github.com/funnyecho/git-syncer/adapter/contrib/alioss"
+	"github.com/funnyecho/git-syncer/adapter/contrib/alioss/bucket"
+	"github.com/funnyecho/git-syncer/adapter/contrib/alioss/options"
 	"github.com/funnyecho/git-syncer/command"
+	"github.com/funnyecho/git-syncer/syncer/contrib"
 	"github.com/funnyecho/git-syncer/syncer/gitter"
-	"github.com/funnyecho/git-syncer/syncer/remote"
 )
 
 func main() {
-	remote.WithFactory(remoteFactory())
+	contrib.WithFactory(contribFactory())
 	command.Exec()
 }
 
 // NewFactory create alioss remote factory
-func remoteFactory() remote.Factory {
-	return func(params interface{ gitter.ConfigReader }) (remote.Remote, error) {
+func contribFactory() contrib.Factory {
+	return func(params interface{ gitter.ConfigReader }) (contrib.Contrib, error) {
 		ossOptions := options.New(params)
 
 		bucket, bucketErr := bucket.New(&bucket.Options{

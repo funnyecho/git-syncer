@@ -52,24 +52,24 @@ const (
 )
 
 const (
-	// RemoteForbidden unknown error
-	RemoteForbidden = 300 + iota
+	// ContribForbidden unknown error
+	ContribForbidden = 300 + iota
 
-	// RemoteHeadNotFound head not found
-	RemoteHeadNotFound
+	// ContribHeadNotFound head not found
+	ContribHeadNotFound
 
-	// RemoteSyncFailed failed to sync
-	RemoteSyncFailed
+	// ContribSyncFailed failed to sync
+	ContribSyncFailed
 
-	// RemoteLocked Remote was locked
-	RemoteLocked
+	// ContribLocked Remote was locked
+	ContribLocked
 
-	// RemoteUnlock Remote is unlock
-	RemoteUnlock
+	// ContribUnlock Remote is unlock
+	ContribUnlock
 
-	// RemoteInvalidLog invalid log format
-	RemoteInvalidLog
+	// ContribInvalidLog invalid log format
+	ContribInvalidLog
 
-	// RemoteInvalidLock invalid lock format
-	RemoteInvalidLock
+	// ContribInvalidLock invalid lock format
+	ContribInvalidLock
 )

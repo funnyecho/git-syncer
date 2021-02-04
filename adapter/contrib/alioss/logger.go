@@ -48,7 +48,7 @@ func (a *Alioss) PushLog(info LogInfo) error {
 	_, uploadErr := a.uploadObject(logPath, bytes.NewReader(jsonLog), oss.ObjectACL(oss.ACLPrivate))
 	if uploadErr != nil {
 		return errors.NewError(
-			errors.WithCode(exitcode.RemoteSyncFailed),
+			errors.WithCode(exitcode.ContribSyncFailed),
 			errors.WithErr(uploadErr),
 			errors.WithMsgf("failed to upload log file to %s", logPath),
 		)
@@ -57,7 +57,7 @@ func (a *Alioss) PushLog(info LogInfo) error {
 	headLogErr := a.putSymlink(logPath, ObjectHeadLinkFile, oss.ObjectACL(oss.ACLPrivate))
 	if headLogErr != nil {
 		return errors.NewError(
-			errors.WithCode(exitcode.RemoteForbidden),
+			errors.WithCode(exitcode.ContribForbidden),
 			errors.WithErr(headLogErr),
 			errors.WithMsgf("failed to link head log file from %s to %s", logPath, ObjectHeadLinkFile),
 		)
@@ -86,7 +86,7 @@ func (a *Alioss) PeekLog() (*LogInfo, error) {
 		return nil, errors.NewError(
 			errors.WithErr(infoReadErr),
 			errors.WithMsg("failed to read contrib head log file"),
-			errors.WithCode(exitcode.RemoteForbidden),
+			errors.WithCode(exitcode.ContribForbidden),
 		)
 	}
 
@@ -96,7 +96,7 @@ func (a *Alioss) PeekLog() (*LogInfo, error) {
 		return nil, errors.NewError(
 			errors.WithErr(jsonErr),
 			errors.WithMsgf("failed to unmarshal contrib head log file: %s", infoBuf.String()),
-			errors.WithCode(exitcode.RemoteInvalidLog),
+			errors.WithCode(exitcode.ContribInvalidLog),
 		)
 	}
 

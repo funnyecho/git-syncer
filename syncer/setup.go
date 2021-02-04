@@ -5,17 +5,17 @@ import (
 
 	"github.com/funnyecho/git-syncer/constants/exitcode"
 	"github.com/funnyecho/git-syncer/pkg/errors"
+	"github.com/funnyecho/git-syncer/syncer/contrib"
 	"github.com/funnyecho/git-syncer/syncer/gitter"
-	"github.com/funnyecho/git-syncer/syncer/remote"
 )
 
 // Setup command handler
-func Setup(remote remote.Remote, git gitter.Gitter) error {
-	if remote == nil || git == nil {
-		return errors.Err(exitcode.InvalidParams, "remote and gitter are required")
+func Setup(cb contrib.Contrib, git gitter.Gitter) error {
+	if cb == nil || git == nil {
+		return errors.Err(exitcode.InvalidParams, "contrib and gitter are required")
 	}
 
-	if sha1, sha1Err := remote.GetHeadSHA1(); sha1Err != nil {
+	if sha1, sha1Err := cb.GetHeadSHA1(); sha1Err != nil {
 		return errors.Wrap(
 			sha1Err,
 			"failed to get deployed sha1",
@@ -37,8 +37,8 @@ func Setup(remote remote.Remote, git gitter.Gitter) error {
 		return errors.Wrap(filesErr, "failed to list tracked files from repo")
 	}
 
-	if uploaded, _, syncErr := remote.Sync(headSHA1, uploads, nil); syncErr != nil {
-		return errors.Wrap(syncErr, "failed to sync tracked files to remote, upload %s ", fmt.Sprintf("%v/%v", len(uploaded), len(uploads)))
+	if uploaded, _, syncErr := cb.Sync(headSHA1, uploads, nil); syncErr != nil {
+		return errors.Wrap(syncErr, "failed to sync tracked files to contrib, upload %s ", fmt.Sprintf("%v/%v", len(uploaded), len(uploads)))
 	}
 
 	return nil

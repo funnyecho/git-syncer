@@ -1,9 +1,9 @@
-package remote
+package contrib
 
 import "github.com/funnyecho/git-syncer/syncer/gitter"
 
-// Remote interface to syncer remote
-type Remote interface {
+// Contrib interface to syncer contrib
+type Contrib interface {
 	GetHeadSHA1() (string, error)
 	Sync(sha1 string, uploads []string, deletes []string) (uploaded []string, deleted []string, err error)
 }
@@ -11,7 +11,7 @@ type Remote interface {
 // Factory factory function to new contrib instance
 type Factory func(options interface {
 	gitter.ConfigReader
-}) (Remote, error)
+}) (Contrib, error)
 
 var factory Factory
 
