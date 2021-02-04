@@ -2,11 +2,11 @@
 
 Git-syncer - Git powered assets synchronize tool.
 
-**git-syncer** is basically a fork of [**git-ftp**](https://github.com/git-ftp/git-ftp), and parts of document below is copied from `git-ftp`.
+**git-syncer** is basically a fork of [**git-ftp**](https://github.com/git-ftp/git-ftp), and parts of document below is copied from `git-ftp` 😂.
 
 ## SYNOPSIS
 
-*git-syncer-\<contrib-name\>* \<action\> [\<options\>]
+`git-syncer-<contrib-name> <action> [<options>]`
 
 See **Contribs** section below for more information about `contrib-name`.
 
@@ -36,32 +36,28 @@ See **Contribs** section below for more information about `contrib-name`.
 
 ## OPTIONS
 
-`-working-dir [working dir]`, `-wd [working dir]`
-: Change working dir path to run syncer.
+`-working-dir [working dir]`, `-wd [working dir]`: Change working dir path to run syncer.
 
-`-working-head [working head]`, `-wh [working head]`
-: Checkout to working head and run syncer.
+`-working-head [working head]`, `-wh [working head]`: Checkout to working head and run syncer.
 
-`-remote [remote]`
-: Synchronize repository to remote. See **remote** section below for more information.
+`-remote [remote]`: Synchronize repository to remote. See **remote** section below for more information.
 
 ## Config
 
-`git-syncer` use config file **.git-syncer-config** located in root working dir instead of default git config file localed in **.git**.
+`git-syncer` use config file `.git-syncer-config` located in root working dir instead of default git config file localed in `.git`.
 
 ### SYNOPSIS
 
-*git-syncer config* [\<options\>] \<key\> [\<value\>]
+`git-syncer config [<options>] <key> [<value>]`
 
 ### Keys
 `git-syncer` used configs listed below:
 
-`sync-root`
-: Specify sub-dir to be synchronized. Default value is empty, mean working dir itself. It's good practice to place assets into a sub-dir and set `sync-root` to sub-dir.
+* `sync-root`: Specify sub-dir to be synchronized. Default value is empty, mean working dir itself. It's good practice to place assets into a sub-dir and set `sync-root` to sub-dir.
 
 Every contrib has different config keys, and can be access with:
 
-*git-syncer config* [\<options\>] \<contrib-name\>.\<key\> [\<value\>]
+`git-syncer config [<options>] <contrib-name>.<key> [<value>]`
 
 ## Contribs
 
@@ -78,7 +74,7 @@ Currently support contrib list below:
 * Meta files used for track synchronization stored in dir `.git-syncer` with acl `private`
 
 #### Contrib Name
-**alioss**
+*alioss*
 
 #### Configs
 
@@ -89,7 +85,7 @@ Currently support contrib list below:
 `access-key-secret`: AccessKeySecret to access ali-oss, without default value and is requried.
 
 `bucket`: Bucket to synchronization, without default value and is requried.
-	
+
 `base`: Sub-path of bucket to synchronization, non-required. If config is empty, used bucket root path.
 
 ## Remote
