@@ -1,6 +1,8 @@
 # git-syncer
 
 ![push](https://github.com/funnyecho/git-syncer/workflows/push/badge.svg)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/funnyecho/git-syncer)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/funnyecho/git-syncer)
 
 Git-syncer - Git powered assets synchronize tool.
 
