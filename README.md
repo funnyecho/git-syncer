@@ -1,5 +1,7 @@
 # git-syncer
 
+![push](https://github.com/funnyecho/git-syncer/workflows/push/badge.svg)
+
 Git-syncer - Git powered assets synchronize tool.
 
 **git-syncer** is basically a fork of [**git-ftp**](https://github.com/git-ftp/git-ftp), and parts of document below is copied from `git-ftp` 😂.
